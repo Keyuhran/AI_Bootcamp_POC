@@ -47,6 +47,8 @@ def main():
             st.success(
                 f"Uploaded {len(st.session_state['queued_files'])} file(s) to: {save_dir}"
             )
+            # Display the current directory contents
+            st.write("Current files in directory:", os.listdir(save_dir))
             
             # Clear out the list so they're not uploaded again on next Confirm
             st.session_state["queued_files"] = []
