@@ -34,17 +34,19 @@ def main():
     # 5) The user presses "Confirm" to finalize saving all queued files to disk.
     if st.button("Confirm", type="primary"):
         if st.session_state["queued_files"]:
-            # Safely construct the directory path
-            save_dir = r"C:\Users\kieran\Desktop\Git\AI_Bootcamp_POC\data\Queries Received and Email Responses"
+            # Use a local relative directory on Streamlit Cloud
+            save_dir = "./data/Queries Received and Email Responses"
             os.makedirs(save_dir, exist_ok=True)  # Ensure directory exists
 
-            # Write each file in the queue to disk
+            # Write each file in the queue to the local ephemeral storage
             for f in st.session_state["queued_files"]:
                 file_path = os.path.join(save_dir, f.name)
                 with open(file_path, "wb") as out_file:
                     out_file.write(f.getbuffer())
             
-            st.success(f"Uploaded {len(st.session_state['queued_files'])} file(s) to: {save_dir}")
+            st.success(
+                f"Uploaded {len(st.session_state['queued_files'])} file(s) to: {save_dir}"
+            )
             
             # Clear out the list so they're not uploaded again on next Confirm
             st.session_state["queued_files"] = []
