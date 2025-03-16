@@ -22,7 +22,7 @@ from helper_functions.llm import count_tokens
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from chromadb.config import Settings
-import chromadb
+#import chromadb
 
 import asyncio
 from functools import partial
