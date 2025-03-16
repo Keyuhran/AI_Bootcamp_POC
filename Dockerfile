@@ -26,6 +26,7 @@ USER 1001
 # Copy local code to the container image.
 #  Copies all files from the local directory to the current working directory in the container (`/home/app`), and changes the ownership of the copied files
 COPY --chown=app:app . ./
+COPY .streamlit /app/.streamlit
 
 # (Optional) Add any additional commands here
 
