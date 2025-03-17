@@ -6,7 +6,7 @@ def HomeNav():
     st.sidebar.page_link("Chatbot.py", label="Chatbot", icon='🤖')
 
 def LoginNav():
-    st.sidebar.page_link("pages/account.py", label="Account", icon='🔐')
+    st.sidebar.page_link("pages/Account.py", label="Account", icon='🔐')
 
 
 def Page1Nav():
