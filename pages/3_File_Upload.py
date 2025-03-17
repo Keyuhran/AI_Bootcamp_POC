@@ -7,11 +7,8 @@ from pages.Account import get_roles
 import os
 
 def main():
-
     # If the user reloads or refreshes the page while still logged in,
-    # go to the account page to restore the login status. Note reloading
-    # the page changes the session id and previous state values are lost.
-    # What we are doing is only to relogin the user.
+    # go to the account page to restore the login status.
     if 'authentication_status' not in ss:
         st.switch_page('./pages/Account.py')
 
@@ -21,7 +18,6 @@ def main():
         st.write('Please log in on login page.')
 
     MenuButtons(get_roles())
-
 
     st.title("Upload .msg Outlook Files")
     st.write("Use this page to queue .msg files, and only save them when you press Confirm.")
@@ -37,10 +33,12 @@ def main():
         accept_multiple_files=True
     )
 
-    # 3) Add newly uploaded files into the 'queued_files' list in session state.
+    # 3) Add newly uploaded files into 'queued_files' if they're not duplicates.
     if uploaded_files:
         for f in uploaded_files:
-            st.session_state["queued_files"].append(f)
+            # Only add if this file's name isn't already in the queue
+            if f.name not in [existing_file.name for existing_file in st.session_state["queued_files"]]:
+                st.session_state["queued_files"].append(f)
 
     # 4) Show the current list of queued (unwritten) files.
     if st.session_state["queued_files"]:
@@ -57,7 +55,7 @@ def main():
             save_dir = "./data/Queries Received and Email Responses"
             os.makedirs(save_dir, exist_ok=True)  # Ensure directory exists
 
-            # Write each file in the queue to the local ephemeral storage
+            # Write each file in the queue to local ephemeral storage
             for f in st.session_state["queued_files"]:
                 file_path = os.path.join(save_dir, f.name)
                 with open(file_path, "wb") as out_file:
@@ -66,7 +64,6 @@ def main():
             st.success(
                 f"Uploaded {len(st.session_state['queued_files'])} file(s) to: {save_dir}"
             )
-            # Display the current directory contents
             st.write("Current files in directory:", os.listdir(save_dir))
             
             # Clear out the list so they're not uploaded again on next Confirm
