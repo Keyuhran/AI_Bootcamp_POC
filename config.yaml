@@ -4,17 +4,19 @@ cookie:
   name: some_cookie_name
 credentials:
   usernames:
-    Joeadmin:
+    joeadmin:
       email: Joeadmin@gmail.com
+      failed_login_attempts: 0
       logged_in: false
       name: Joe Admin
-      password: farmerjoe
+      password: $2b$12$Deb7XFffs7FwspZx4vuavu9JwPf8zSQh.VnFxDZR9W9qvZPEfvDNu
       role: admin
-    Joeuser:
+    joeuser:
       email: Joeuser@gmail.com
-      logged_in: false
+      failed_login_attempts: 0
+      logged_in: true
       name: Joe User
-      password: farmerjoe
+      password: $2b$12$xMDAR4gCWwcooSebUV/CY.Vecxdwm3Qs0kwSwwUVt/BaSfTvz7d..
       role: user
 preauthorized:
   emails:

@@ -1,9 +1,23 @@
 # pages/3_File_Upload.py
 
 import streamlit as st
+from streamlit import session_state as ss
+from nav_modules.nav import MenuButtons
+from pages.Account import get_roles
 import os
 
 def main():
+
+    # If the user reloads or refreshes the page while still logged in,
+    # go to the account page to restore the login status. Note reloading
+    # the page changes the session id and previous state values are lost.
+    # What we are doing is only to relogin the user.
+    if 'authentication_status' not in ss:
+        st.switch_page('./pages/Account.py')
+
+    MenuButtons(get_roles())
+
+
     st.title("Upload .msg Outlook Files")
     st.write("Use this page to queue .msg files, and only save them when you press Confirm.")
 

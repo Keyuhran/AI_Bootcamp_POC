@@ -10,7 +10,7 @@ def LoginNav():
 
 
 def Page1Nav():
-    st.sidebar.page_link("pages/1_Methodology.py", label="Methodology", icon='🗎')
+    st.sidebar.page_link("pages/1_Methodology.py", label="Methodology", icon='📚')
 
 
 def Page2Nav():
@@ -30,10 +30,6 @@ def MenuButtons(user_roles=None):
     if 'authentication_status' not in ss:
         ss.authentication_status = False
 
-    # Always show the relevant navigators.
-    LoginNav()
-    Page1Nav()
-    Page2Nav()
 
 
     # Show the other page navigators depending on the users' role.
@@ -49,3 +45,8 @@ def MenuButtons(user_roles=None):
 
         # (2) users with user and admin roles have access to chatbot
         HomeNav()   
+
+    # Always show the relevant navigators.
+    LoginNav()
+    Page1Nav()
+    Page2Nav()

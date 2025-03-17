@@ -34,31 +34,34 @@ authenticator = stauth.Authenticate(
     config['cookie']['name'],
     config['cookie']['key'],
     config['cookie']['expiry_days'],
-    config['preauthorized']
 )
 
-login_tab, register_tab = st.tabs(['Login', 'Register'])
+#login_tab, register_tab = st.tabs(['Login', 'Register'])
+login_tab = st.tabs(['Login'])
 
-with login_tab:
-    authenticator.login(location='main')
+#with login_tab:
 
-    if ss["authentication_status"]:
-        authenticator.logout(location='main')    
-        st.write(f'Welcome *{ss["name"]}*')
+authenticator.login(location='main')
 
-    elif ss["authentication_status"] is False:
-        st.error('Username/password is incorrect')
-    elif ss["authentication_status"] is None:
-        st.warning('Please enter your username and password')
+if ss["authentication_status"]:
+    authenticator.logout(location='main')    
+    st.write(f'Welcome *{ss["name"]}*')
 
-with register_tab:
-    if not ss["authentication_status"]:
-        try:
-            email_of_registered_user, username_of_registered_user, name_of_registered_user = authenticator.register_user(pre_authorization=False)
-            if email_of_registered_user:
-                st.success('User registered successfully')
-        except Exception as e:
-            st.error(e)
+elif ss["authentication_status"] is False:
+    st.error('Username/password is incorrect')
+elif ss["authentication_status"] is None:
+    st.warning('Please enter your username and password')
+
+# with register_tab:
+#     if not ss["authentication_status"]:
+#         try:
+#             email_of_registered_user, \
+#             username_of_registered_user, \
+#             name_of_registered_user = authenticator.register_user(pre_authorized=config['pre-authorized']['emails'])
+#             if email_of_registered_user:
+#                 st.success('User registered successfully')
+#         except Exception as e:
+#             st.error(e)
 
 # We call below code in case of registration, reset password, etc.
 with open(CONFIG_FILENAME, 'w') as file:
