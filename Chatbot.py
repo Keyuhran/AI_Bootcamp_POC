@@ -24,7 +24,7 @@ st.set_page_config(
     page_title="My Streamlit App"
 )
 if 'authentication_status' not in ss:
-    st.switch_page('./pages/account.py')
+    st.switch_page('./pages/Account.py')
 
 MenuButtons(get_roles())
 
