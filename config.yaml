@@ -1,0 +1,21 @@
+cookie:
+  expiry_days: 3000
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    Joeadmin:
+      email: Joeadmin@gmail.com
+      logged_in: false
+      name: Joe Admin
+      password: farmerjoe
+      role: admin
+    Joeuser:
+      email: Joeuser@gmail.com
+      logged_in: false
+      name: Joe User
+      password: farmerjoe
+      role: user
+preauthorized:
+  emails:
+  - kieran.raj2006@gmail.com
