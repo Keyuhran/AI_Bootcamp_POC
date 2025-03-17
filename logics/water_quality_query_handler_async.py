@@ -21,7 +21,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from helper_functions.llm import count_tokens
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
-#import chromadb
+import chromadb
 
 import asyncio
 from functools import partial
