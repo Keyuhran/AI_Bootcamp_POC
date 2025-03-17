@@ -15,6 +15,11 @@ def main():
     if 'authentication_status' not in ss:
         st.switch_page('./pages/Account.py')
 
+    if ss.authentication_status:
+        st.write('This content is only accessible for admins.')
+    else:
+        st.write('Please log in on login page.')
+
     MenuButtons(get_roles())
 
 
