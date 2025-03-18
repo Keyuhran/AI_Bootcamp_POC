@@ -21,8 +21,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from helper_functions.llm import count_tokens
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
-from chromadb.config import Settings
-#import chromadb
+import chromadb
 
 import asyncio
 from functools import partial
@@ -58,18 +57,14 @@ def create_email_vectordb(embeddings_model,vectordb_name):
     # Create Vector Database
     vectordb = Chroma.from_documents(
         filter_complex_metadata(splitted_documents),
-        embedding=embeddings_model,
-        collection_name=vectordb_name,
-        persist_directory=vectorstore_path, # define location directory to save the vectordb
-        client_settings=Settings(
-            chroma_db_impl="duckdb+parquet",
-            persist_directory=vectorstore_path
-        )
+        embedding=embeddings_model, 
+        collection_name= vectordb_name, 
+        persist_directory= vectorstore_path # define location directory to save the vectordb
     )
     return vectordb # return vectordb to be used
 
 def create_wq_reference_vectordb(embeddings_model):
-    # Load in documents
+    # Load in documents 
     loader_eph = PyPDFLoader('data\code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.pdf')
     doc_eph = loader_eph.load()
     loader_who = PyPDFLoader('data\WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.pdf')
@@ -96,10 +91,6 @@ def create_wq_reference_vectordb(embeddings_model):
         documents=split_doc_merge,
         embedding=embeddings_model,
         persist_directory="data/vectordb_wq_reference",  # Where to save data locally, remove if not neccesary
-        client_settings=Settings(
-            chroma_db_impl="duckdb+parquet",
-            persist_directory="data/vectordb_wq_reference"
-        )
     )
 
     # # Alternate Code
@@ -129,7 +120,7 @@ def vectordb_acquire(vectordb_name: str):
     # Create code to differentiate between the two vectordbs (vectordb_email_semantic and vectordb_reference) in this workflow
     match vectordb_name.lower():
         case name if 'email' in name:
-            # check for presence of email_semantic vectordb
+        # check for presence of email_semantic vectordb
             if os.path.exists(vectorstore_path):
                 # If directory exists, load using Chroma.
                 print('VectorDB found, now loading existing vector database...')
@@ -142,11 +133,7 @@ def vectordb_acquire(vectordb_name: str):
                 vectordb = Chroma(
                     persist_directory=persist_directory,
                     collection_name=vectordb_name,
-                    embedding_function=embeddings_model,
-                    client_settings=Settings(
-                        chroma_db_impl="duckdb+parquet",
-                        persist_directory=persist_directory
-                    )
+                    embedding_function=embeddings_model
                 )
                 print(f'{vectordb_name} loaded successfully!')
             else:
@@ -156,7 +143,7 @@ def vectordb_acquire(vectordb_name: str):
             return vectordb # return vectordb to be used
         
         case "vectordb_wq_reference":
-            # check for the presence of vectordb_wq_reference
+        # check for the presence of vectordb_wq_reference
             if os.path.exists('data/vectordb_wq_reference'):
                 # If directory exists, load using Chroma.
                 print('VectorDB found, now loading existing vector database...')
@@ -169,11 +156,7 @@ def vectordb_acquire(vectordb_name: str):
                 vectordb = Chroma(
                     persist_directory=persist_directory,
                     collection_name='wq_reference',
-                    embedding_function=embeddings_model,
-                    client_settings=Settings(
-                        chroma_db_impl="duckdb+parquet",
-                        persist_directory=persist_directory
-                    )
+                    embedding_function=embeddings_model
                 )
                 print(f'{vectordb_name} vectordb loaded successfully!')
             else:
