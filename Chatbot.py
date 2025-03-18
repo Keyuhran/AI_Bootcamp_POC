@@ -1,8 +1,8 @@
 # main file to be run by streamlit.
 # Set up and run this Streamlit App
-#__import__('pysqlite3')
+__import__('pysqlite3')
 import sys
-#sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import streamlit as st
 from streamlit import session_state as ss
 from nav_modules.nav import MenuButtons
