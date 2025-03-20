@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="data.js"></script>
+<body>
+
+<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+
+<script>
+
+
+const xValues = [];
+const currentDate = new Date();
+
+for (let i = 0; i < 5; i++) {
+  const pastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 0);
+  xValues.push(pastMonth.toLocaleString('default', { month: 'long' }) + " " + pastMonth.getFullYear());
+}
+
+var yValues = [];
+var barColors = [
+  "rgba(0,0,255,1.0)",
+  "rgba(0,0,255,0.6)",
+  "rgba(0,0,255,0.6)",
+  "rgba(0,0,255,0.6)",
+  "rgba(0,0,255,0.6)",
+];
+
+new Chart("myChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Chatbot Interaction"
+    }
+  }
+});
+</script>
+
+</body>
+</html>

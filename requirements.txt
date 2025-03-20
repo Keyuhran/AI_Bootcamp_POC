@@ -239,3 +239,5 @@ pysqlite3-binary
 fastapi
 uvicorn
 pymupdf4llm
+path
+cors

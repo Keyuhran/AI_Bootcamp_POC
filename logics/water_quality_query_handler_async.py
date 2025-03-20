@@ -338,13 +338,14 @@ async def process_user_message_wq(user_input):
     # Setup vectordbs before entering async portions
     email_vectordb = 'email_semantic_98'
     vectordb_acquire('email_semantic_98')
+    wq_vectordb = 'vectordb_wq_reference'
     vectordb_acquire("vectordb_wq_reference")
 
     # Create tasks for processes 2, 3, and 4
     loop = asyncio.get_event_loop()
     tasks = [
         loop.run_in_executor(None, partial(get_water_quality_guidelines, process_step_1)),
-        loop.run_in_executor(None, partial(substantiate_water_quality_parameter, process_step_1)),
+        loop.run_in_executor(None, partial(substantiate_water_quality_parameter, user_input, wq_vectordb)),
         loop.run_in_executor(None, partial(get_email_records, user_input, email_vectordb))
     ]
     # Wait for all tasks to complete
