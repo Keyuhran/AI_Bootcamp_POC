@@ -21,6 +21,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from helper_functions.llm import count_tokens
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+from langchain_community.document_loaders import UnstructuredMarkdownLoader
 import chromadb
 
 import asyncio
@@ -64,14 +65,16 @@ def create_email_vectordb(embeddings_model,vectordb_name):
     return vectordb # return vectordb to be used
 
 def create_wq_reference_vectordb(embeddings_model):
-    # Load in documents 
-    loader_eph = PyPDFLoader('data\code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.pdf')
+    # Define Markdown files correctly with loaders
+    loader_eph = UnstructuredMarkdownLoader('data/Environmental Public Health (Water suitable for drinking)(No. 2) Regulations SFA Apr 2019.md')
     doc_eph = loader_eph.load()
-    loader_who = PyPDFLoader('data\WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.pdf')
+
+    loader_who = UnstructuredMarkdownLoader('data/WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.md')
     doc_who = loader_who.load()
-    loader_sfa = PyPDFLoader('data\Environmental Public Health (Water suitable for drinking)(No. 2) Regulations SFA Apr 2019.pdf')
+
+    loader_sfa = UnstructuredMarkdownLoader('data/code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.md')
     doc_sfa = loader_sfa.load()
- 
+
     # Creating character splitter for document splitting and chunking
     splitter1 = RecursiveCharacterTextSplitter(
         separators=["\n\n", "\n", " ", ""],
@@ -85,12 +88,12 @@ def create_wq_reference_vectordb(embeddings_model):
     split_sfa = splitter1.split_documents(doc_sfa)
     split_doc_merge = split_eph + split_who + split_sfa
 
-    # Creating basic vector database
+    # Creating Chroma vector database
     vectordb = Chroma.from_documents(
         collection_name="wq_reference",
         documents=split_doc_merge,
         embedding=embeddings_model,
-        persist_directory="data/vectordb_wq_reference",  # Where to save data locally, remove if not neccesary
+        persist_directory="data/vectordb_wq_reference"
     )
 
     # # Alternate Code
@@ -217,6 +220,7 @@ def substantiate_water_quality_parameter(wq_parameters): # consider using the pa
     
     # Debugging: Check if retrieval returns results
     retrieved_docs = vectordb.as_retriever(k=10).get_relevant_documents(f'Obtain guideline values for {wq_parameters}')
+    
     if not retrieved_docs:
         return "No relevant reference materials found for the given parameters."
 

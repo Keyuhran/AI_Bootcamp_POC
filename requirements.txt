@@ -238,3 +238,4 @@ zipp==3.20.2
 pysqlite3-binary
 fastapi
 uvicorn
+pymupdf4llm
