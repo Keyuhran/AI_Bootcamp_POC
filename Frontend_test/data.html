@@ -8,41 +8,59 @@
 
 <script>
 
+document.addEventListener("DOMContentLoaded", async function () {
+    console.log("Fetching interaction data...");
 
-const xValues = [];
-const currentDate = new Date();
+    try {
+        const response = await fetch('/api/interactions'); // Ensure this API route is correct
+        const data = await response.json();
+        console.log("Fetched data:", data);
 
-for (let i = 0; i < 5; i++) {
-  const pastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 0);
-  xValues.push(pastMonth.toLocaleString('default', { month: 'long' }) + " " + pastMonth.getFullYear());
-}
+        // Extract yValues from fetched data
+        const yValues = Object.values(data); // Get the counts
+        console.log("Updated yValues:", yValues);
 
-var yValues = [];
-var barColors = [
-  "rgba(0,0,255,1.0)",
-  "rgba(0,0,255,0.6)",
-  "rgba(0,0,255,0.6)",
-  "rgba(0,0,255,0.6)",
-  "rgba(0,0,255,0.6)",
-];
+        // Generate the past 5 months for xValues
+        const xValues = [];
+        const currentDate = new Date();
 
-new Chart("myChart", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    legend: {display: false},
-    title: {
-      display: true,
-      text: "Chatbot Interaction"
+        for (let i = 0; i < 5; i++) {
+            const pastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 0);
+            xValues.push(pastMonth.toLocaleString('default', { month: 'long' }) + " " + pastMonth.getFullYear());
+        }
+
+        const barColors = [
+            "rgba(0,0,255,1.0)",
+            "rgba(0,0,255,0.6)",
+            "rgba(0,0,255,0.6)",
+            "rgba(0,0,255,0.6)",
+            "rgba(0,0,255,0.6)"
+        ];
+
+        // Initialize the Chart AFTER data is loaded
+        new Chart("myChart", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: barColors,
+                    data: yValues // Ensure this gets dynamically updated
+                }]
+            },
+            options: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: "Chatbot Interaction (Last 5 Months)"
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
     }
-  }
 });
+
 </script>
 
 </body>
