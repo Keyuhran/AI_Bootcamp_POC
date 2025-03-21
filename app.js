@@ -24,16 +24,8 @@ const upload = multer({ dest: 'uploads/' });
 const frontendPath = path.join(__dirname, 'Frontend_test');
 app.use(express.static(frontendPath));
 
-// API: Fetch interaction data
-app.get('/api/interactions', async (req, res) => {
-    try {
-        const interactions = await dataController.fetchLastFiveMonthsInteractions();
-        res.json(interactions);
-    } catch (error) {
-        console.error('Error fetching interactions:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+// Store extracted email text in memory
+let storedEmailText = "";
 
 // POST /analyze-file — file upload and sentiment processing
 app.post('/analyze-file', upload.single('file'), (req, res) => {
@@ -43,13 +35,15 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
     let output = '';
 
     python.stdout.on('data', (data) => {
-        output += data.toString();
+        const chunk = data.toString();
+        console.log("[PYTHON STDOUT]:", chunk); // 👈 add this line
+        output += chunk;
     });
 
     python.stderr.on('data', (data) => {
-        console.error(`Python error: ${data}`);
+        console.error("[PYTHON ERROR]:", data.toString());
     });
-
+    
     python.on('close', (code) => {
         fs.unlink(filePath, () => {}); // cleanup uploaded file
 
@@ -59,6 +53,8 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
 
         try {
             const json = JSON.parse(output.trim());
+            storedEmailText = json.emailText; // Store the extracted email text
+            console.log("[DEBUG] Stored Email Text:", storedEmailText);
             res.json(json);
         } catch (err) {
             console.error("JSON parse error:", err);
@@ -67,12 +63,12 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
     });
 });
 
-// Route: serve `data.html`
-app.get('/data', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'data.html'));
+// GET /get-email-content — serves stored email text
+app.get('/get-email-content', (req, res) => {
+    res.json({ emailText: storedEmailText });
 });
 
-// Optional: route for detailed email sentiment analysis
+// Route: serve `details.html`
 app.get('/details', (req, res) => {
     res.sendFile(path.join(frontendPath, 'details.html'));
 });

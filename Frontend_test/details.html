@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+            <h2>Analysing: Email</h2>
+        </div>
+
+        <div class="email-content">
+            <p id="email-text">Loading email content...</p>
+        </div>
+
+        <div class="summary">
+            <h3><b>Summary</b></h3>
+            <p>A student researcher requires non-confidential data.</p>
+        </div>
+
+        <div class="sentiment">
+            <img src="media/happy-face.png" alt="Positive Sentiment"/>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the stored email text from the backend
+        fetch('/get-email-content')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('email-text').textContent = data.emailText || "No email content available.";
+            })
+            .catch(error => console.error('Error fetching email:', error));
+    </script>
+</body>
+</html>

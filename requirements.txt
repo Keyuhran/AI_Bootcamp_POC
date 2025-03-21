@@ -244,3 +244,5 @@ cors
 nltk
 kagglehub
 multer
+extract-msg
+chardet
