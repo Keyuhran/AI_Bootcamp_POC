@@ -152,3 +152,92 @@ html, body, #root {
     font-size: 0.75rem;
     color: gray;
   }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #4b0082, #0000ff);
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure the dashboard layout is in a g.rid */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  padding: 20px;
+  background: linear-gradient(to right, #3a0ca3, #4361ee);
+  color: white;
+}
+
+/* Style the logo */
+.logo img {
+  max-width: 150px;
+}
+
+/* Sentiment Analysis section */
+.sentiment-analysis {
+  grid-column: span 2;
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+/* Sentiment row */
+.sentiment-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid gray;
+}
+
+/* Emoji styles */
+.emoji {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+/* Interactions (Graph) */
+.interactions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  min-height: 300px; /* Ensures the graph has enough space */
+}
+
+.interactions canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+s inside the graph is visible */
+#myChart {
+  width: 100% !important;
+  height: 250px !important;
+}
+
+/* Frequently Asked Topics */
+.frequently-asked {
+  grid-column: 2 / span 1;
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+/* Make sure the chart canvas has enough space */
+canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+
+

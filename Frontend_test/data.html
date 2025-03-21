@@ -1,67 +1,94 @@
 <!DOCTYPE html>
-<html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-<script src="data.js"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
 <body>
+    <div class="dashboard-container">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="pub-logo.png" alt="PUB Logo">
+        </div>
 
-<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+        <!-- Sentiment Analysis Panel -->
+        <div class="sentiment-analysis">
+            <h2>Sentiment Analysis</h2>
+            <div class="sentiment-row">
+                <span class="emoji happy">😊</span>
+                <p><strong>PUB Officers are so friendly! Love the work you do at PUB!</strong></p>
+            </div>
+            <div class="sentiment-row">
+                <span class="emoji neutral">😐</span>
+                <p><strong>The water tastes funny at times</strong></p>
+            </div>
+            <div class="sentiment-row">
+                <span class="emoji sad">😡</span>
+                <p><strong>The water at Jurong is so polluted!</strong></p>
+            </div>
+        </div>
 
-<script>
+        <!-- Interactions Graph -->
+        <div class="interactions">
+            <h2>Interactions</h2>
+            <canvas id="myChart"></canvas>
+        </div>
 
-document.addEventListener("DOMContentLoaded", async function () {
-    console.log("Fetching interaction data...");
+        <!-- Frequently Asked Topics -->
+        <div class="frequently-asked">
+            <h2>Frequently Asked Topics</h2>
+            <ul>
+                <li>High PH level in water <span>33%</span></li>
+                <li>Brownish colour in water <span>33%</span></li>
+                <li>Dead fish in water <span>33%</span></li>
+            </ul>
+        </div>
+    </div>
 
-    try {
-        const response = await fetch('/api/interactions'); // Ensure this API route is correct
-        const data = await response.json();
-        console.log("Fetched data:", data);
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/interactions'); // Fetch data from backend
+                const data = await response.json();
+                
+                const xValues = [];
+                const yValues = [];
 
-        // Extract yValues from fetched data
-        const yValues = Object.values(data); // Get the counts
-        console.log("Updated yValues:", yValues);
+                Object.keys(data).sort().forEach(month => {
+                    xValues.push(new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' }));
+                    yValues.push(data[month]);
+                });
 
-        // Generate the past 5 months for xValues
-        const xValues = [];
-        const currentDate = new Date();
+                console.log("Chart Data:", { xValues, yValues });
 
-        for (let i = 0; i < 5; i++) {
-            const pastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 0);
-            xValues.push(pastMonth.toLocaleString('default', { month: 'long' }) + " " + pastMonth.getFullYear());
+                // Initialize Chart
+                new Chart("myChart", {
+                    type: "bar",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            backgroundColor: [ "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)","rgba(0,0,255,1.0)",],
+                            data: yValues
+                        }]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: "Chatbot Interactions"
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching interaction data:", error);
+            }
         }
 
-        const barColors = [
-            "rgba(0,0,255,1.0)",
-            "rgba(0,0,255,0.6)",
-            "rgba(0,0,255,0.6)",
-            "rgba(0,0,255,0.6)",
-            "rgba(0,0,255,0.6)"
-        ];
-
-        // Initialize the Chart AFTER data is loaded
-        new Chart("myChart", {
-            type: "bar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    backgroundColor: barColors,
-                    data: yValues // Ensure this gets dynamically updated
-                }]
-            },
-            options: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: "Chatbot Interaction (Last 5 Months)"
-                }
-            }
-        });
-
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-});
-
-</script>
-
+        // Fetch data on page load
+        fetchData();
+    </script>
 </body>
 </html>
