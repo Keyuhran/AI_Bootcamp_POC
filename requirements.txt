@@ -241,3 +241,6 @@ uvicorn
 pymupdf4llm
 path
 cors
+nltk
+kagglehub
+multer

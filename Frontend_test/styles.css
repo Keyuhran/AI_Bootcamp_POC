@@ -73,19 +73,21 @@ html, body, #root {
 }
 /* Input form */
 .input-form {
-    width: 60%; 
-    margin: 0 auto; 
-    display: flex;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #f2f2f2;
 }
+
+.file-upload {
+  flex-shrink: 0;
+}
+
 .chat-input {
-    width: 100%;
-    height: 50px;
-    border-radius: 15px;
-    border: 2px solid #ccc;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    outline: none;
+  flex-grow: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
 }
 .chat-input:focus {
     border-color: #fff;

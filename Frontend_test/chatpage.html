@@ -6,86 +6,122 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <div class="logo-container">
-      <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
-    </div>
+  <div class="logo-container">
+    <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+  </div>
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <script type="text/babel">
-      const { useState, useRef, useEffect } = React;
+  <script type="text/babel">
+    const { useState, useRef, useEffect } = React;
 
-      function App() {
-        const [messages, setMessages] = useState([]);
-        const [input, setInput] = useState("");
-        const messagesEndRef = useRef(null);
+    function App() {
+      const [messages, setMessages] = useState([]);
+      const [input, setInput] = useState("");
+      const [selectedFile, setSelectedFile] = useState(null);
+      const messagesEndRef = useRef(null);
 
-        const handleSubmit = async (e) => {
-          e.preventDefault();
-          if(input.trim()) {
-            const userMessage = { text: input, sender: "Kieran", time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
-            setMessages(prev => [...prev, userMessage]);
-            setInput("");
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!input.trim() && !selectedFile) return;
 
-            const response = await fetch('http://localhost:8000/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ content: input })
-            });
-
-            const data = await response.json();
-            const botMessage = { text: data.response, sender: "Bot", time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
-            setMessages(prev => [...prev, botMessage]);
-          }
+        const userMessage = {
+          text: input || (selectedFile && `Uploaded file: ${selectedFile.name}`),
+          sender: "Kieran",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
+        
+        setMessages(prev => [...prev, userMessage]);
+        setInput("");
 
-        useEffect(() => {
-          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }, [messages]);
+        let response;
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append("file", selectedFile);
 
-        return (
-          <div className="app-container">
-            <aside className="sidebar">
-              <div className="icon-wrapper">
-                <img src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><circle cx='16' cy='16' r='16'/></svg>" alt="Analytics" />
-                <span>Analytics</span>
-              </div>
-              <div className="icon-wrapper">
-                <img src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><rect x='4' y='4' width='24' height='24'/></svg>" alt="Advanced Reasoning" />
-                <span>Advanced Reasoning</span>
-              </div>
-            </aside>
+          response = await fetch('http://localhost:3000/analyze-file', {
+            method: 'POST',
+            body: formData
+          });
+        } else {
+          response = await fetch('http://localhost:8000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: input })
+          });
+        }
 
-            <main className="chat-content">
-              <div className="messages-container">
-                {messages.map((msg, idx) => (
-                  <div key={idx} className={`message-bubble ${msg.sender === "Kieran" ? "user-message" : "bot-message"}`}>
-                    <p>{msg.text}</p>
-                    <small>{msg.sender} · {msg.time}</small>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
+        const data = await response.json();
+        const botMessage = {
+        text: data.summary || data.response,
+        sender: "Bot",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        showDetails: data.showDetails
+        };
+        setMessages(prev => [...prev, botMessage]);
+        setSelectedFile(null);
+      };
 
-              <form className="input-form" onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="Type here..."
-                  className="chat-input"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                />
-              </form>
-            </main>
-          </div>
-        );
-      }
+      useEffect(() => {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }, [messages]);
 
-      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
-  </body>
-  </html>
+      return (
+        <div className="app-container">
+          <aside className="sidebar">
+            <div className="icon-wrapper">
+              <img src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><circle cx='16' cy='16' r='16'/></svg>" alt="Analytics" />
+              <span>Analytics</span>
+            </div>
+            <div className="icon-wrapper">
+              <img src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><rect x='4' y='4' width='24' height='24'/></svg>" alt="Advanced Reasoning" />
+              <span>Advanced Reasoning</span>
+            </div>
+          </aside>
+
+          <main className="chat-content">
+            <div className="messages-container">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`message-bubble ${msg.sender === "Kieran" ? "user-message" : "bot-message"}`}>
+                  <p>{msg.text}</p>
+                  {msg.showDetails && (
+                    <button
+                      onClick={() => window.location.href = `/details?score=${msg.score}`}
+                      className="details-button"
+                    >
+                      View Details
+                    </button>
+                  )}
+                  <small>{msg.sender} · {msg.time}</small>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <form className="input-form" onSubmit={handleSubmit}>
+              <input
+                type="file"
+                className="file-upload"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+              <input
+                type="text"
+                placeholder="Type here..."
+                className="chat-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+            </form>
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
