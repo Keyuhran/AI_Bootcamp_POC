@@ -80,6 +80,15 @@ app.get('/get-email-content', (req, res) => {
     });
 });
 
+app.get('/api/interactions', async (req, res) => {
+    try {
+        const interactions = await dataController.fetchLastFiveMonthsInteractions();
+        res.json(interactions);
+    } catch (error) {
+        console.error("❌ Failed to fetch interactions:", error);
+        res.status(500).json({ error: 'Failed to fetch interaction data' });
+    }
+});
 
 // Route: serve `details.html`
 app.get('/details', (req, res) => {
