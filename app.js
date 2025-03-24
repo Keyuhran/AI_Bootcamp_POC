@@ -43,7 +43,7 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
     python.stderr.on('data', (data) => {
         console.error("[PYTHON ERROR]:", data.toString());
     });
-    
+
     python.on('close', (code) => {
         fs.unlink(filePath, () => {}); // cleanup uploaded file
 
@@ -54,6 +54,10 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
         try {
             const json = JSON.parse(output.trim());
             storedEmailText = json.emailText; // Store the extracted email text
+            storedEmailSender = json.emailSender;
+            storedEmailSubject = json.emailSubject;
+            storedEmailBody = json.emailBody;
+            storedEmailScore = json.score;
             console.log("[DEBUG] Stored Email Text:", storedEmailText);
             res.json(json);
         } catch (err) {
@@ -65,8 +69,17 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
 
 // GET /get-email-content — serves stored email text
 app.get('/get-email-content', (req, res) => {
-    res.json({ emailText: storedEmailText });
+    res.json({
+        emailText: storedEmailText,
+        emailSender: storedEmailSender,
+        emailSubject: storedEmailSubject,
+        emailBody: storedEmailBody,
+        emailScore: storedEmailScore,     
+        //emailSummary: storedEmailSummary
+        
+    });
 });
+
 
 // Route: serve `details.html`
 app.get('/details', (req, res) => {

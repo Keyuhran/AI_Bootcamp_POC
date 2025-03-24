@@ -46,7 +46,7 @@ if __name__ == "__main__":
             msg_sender = msg.sender or ""
             msg_subject = msg.subject or ""
             msg_body = msg.body or ""
-            email_text = f"From: {msg_sender}\nSubject: {msg_subject}\n\n{msg_body}"
+            email_text = f"From: {msg_sender}\nSubject: {msg_subject}\n\n{msg_body}".strip()
         except:
             # Fallback to text file
             try:
@@ -71,6 +71,9 @@ if __name__ == "__main__":
 
     result = {
         "emailText": email_text,
+        "emailSender": msg.sender,
+        "emailSubject": msg.subject,
+        "emailBody": msg.body,
         "summary": f"The email you uploaded has a sentiment score of {sentiment_score}.",
         "score": sentiment_score,
         "showDetails": True

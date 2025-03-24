@@ -1,3 +1,4 @@
+#config below is for STREAMLIT login details, not html
 cookie:
   expiry_days: 3000
   key: some_signature_key
