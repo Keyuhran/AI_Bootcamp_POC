@@ -106,6 +106,17 @@ app.get('/api/interactions', async (req, res) => {
     }
 });
 
+// GET /api/categories — returns category frequency data
+app.get('/api/categories', async (req, res) => {
+    try {
+      const categoryCounts = await dataController.fetchAllCategoryCounts();
+      res.json(categoryCounts);
+    } catch (error) {
+      console.error("❌ Failed to fetch category counts:", error);
+      res.status(500).json({ error: 'Failed to fetch category data' });
+    }
+  });
+
 // Route: serve `details.html`
 app.get('/details', (req, res) => {
     res.sendFile(path.join(frontendPath, 'details.html'));

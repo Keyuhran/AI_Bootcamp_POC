@@ -8,24 +8,6 @@ const supabaseUrl = 'https://gnhhkqqahqwdfszpiyfb.supabase.co';
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// async function fetchAllInteractions() {
-//     const { data, error } = await supabase
-//         .from('Interactions')
-//         .select('*');
-//         return data
-
-// }
-
-// fetchAllInteractions().then(data => {
-//     console.log(data);
-//   }).catch(error => {
-//     console.error('Error:', error);
-//   });
-  
-// module.exports = {
-//   fetchAllInteractions
-// };
-
 
 // async function to fetch interaction counts by month using SQL RPC function
 async function fetchInteractionsCountByMonth(targetMonth) {
@@ -55,16 +37,50 @@ async function fetchInteractionsCountByMonth(targetMonth) {
     console.log('Interaction counts for the current month and past 4 months:', results);
     return results;
   }
+
+
+  async function fetchCategoryCount(category) {
+    const { data, error } = await supabase.rpc('get_enquiry_by_category', {
+      target_category: category
+    });
+  
+    if (error) {
+      console.error(`Error fetching category '${category}':`, error);
+      return 0;
+    }
+  
+    return data.length || 0;
+  }
+  
+  async function fetchAllCategoryCounts() {
+    const categories = [
+      'Colour_of_water', 'Taste_of_water', 'Smell_of_water',
+      'Water_pressure', 'Water_leakage', 'Water_quality',
+      'Water_temperature', 'flooding', 'Other'
+    ];
+  
+    const results = {};
+    for (const category of categories) {
+      const count = await fetchCategoryCount(category);
+      results[category] = count;
+    }
+  
+
+    console.log ('Category counts:', results);
+    return results;
+  }
   
   // Testing the function
-  fetchLastFiveMonthsInteractions().then(counts => {
-    console.log('Fetched counts:', counts);
-  }).catch(error => {
-    console.error('Error:', error);
-  });
+//   fetchLastFiveMonthsInteractions().then(counts => {
+//     console.log('Fetched counts:', counts);
+//   }).catch(error => {
+//     console.error('Error:', error);
+//   });
   
   module.exports = {
     fetchInteractionsCountByMonth,
-    fetchLastFiveMonthsInteractions
+    fetchLastFiveMonthsInteractions,
+    fetchCategoryCount,
+    fetchAllCategoryCounts
   };
   
