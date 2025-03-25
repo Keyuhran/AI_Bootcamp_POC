@@ -7,6 +7,7 @@ const dataController = require('./controllers/dataController');
 const multer = require('multer');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const { summarizeEmail } = require('./controllers/summarizeEmailBody');
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
@@ -26,9 +27,14 @@ app.use(express.static(frontendPath));
 
 // Store extracted email text in memory
 let storedEmailText = "";
+let storedEmailSender = "";
+let storedEmailSubject = "";
+let storedEmailBody = "";
+let storedEmailScore = 0;
+let storedEmailSummary = "";
 
 // POST /analyze-file — file upload and sentiment processing
-app.post('/analyze-file', upload.single('file'), (req, res) => {
+app.post('/analyze-file', upload.single('file'), async (req, res) => {
     const filePath = req.file.path;
     const python = spawn('python', ['nlp.py', filePath]);
 
@@ -36,7 +42,7 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
 
     python.stdout.on('data', (data) => {
         const chunk = data.toString();
-        console.log("[PYTHON STDOUT]:", chunk); // 👈 add this line
+        console.log("[PYTHON STDOUT]:", chunk);
         output += chunk;
     });
 
@@ -44,7 +50,7 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
         console.error("[PYTHON ERROR]:", data.toString());
     });
 
-    python.on('close', (code) => {
+    python.on('close', async (code) => {
         fs.unlink(filePath, () => {}); // cleanup uploaded file
 
         if (code !== 0) {
@@ -53,13 +59,23 @@ app.post('/analyze-file', upload.single('file'), (req, res) => {
 
         try {
             const json = JSON.parse(output.trim());
-            storedEmailText = json.emailText; // Store the extracted email text
+            storedEmailText = json.emailText;
             storedEmailSender = json.emailSender;
             storedEmailSubject = json.emailSubject;
             storedEmailBody = json.emailBody;
             storedEmailScore = json.score;
-            console.log("[DEBUG] Stored Email Text:", storedEmailText);
-            res.json(json);
+            storedEmailSummary = await summarizeEmail(storedEmailBody);
+
+            res.json({
+                summary: `The email you uploaded has a sentiment score of ${storedEmailScore}`,
+                showDetails: true,
+                emailText: storedEmailText,
+                emailSender: storedEmailSender,
+                emailSubject: storedEmailSubject,
+                emailBody: storedEmailBody,
+                emailScore: storedEmailScore,
+                emailSummary: storedEmailSummary
+              });
         } catch (err) {
             console.error("JSON parse error:", err);
             res.json({ response: output.trim() });
@@ -74,12 +90,12 @@ app.get('/get-email-content', (req, res) => {
         emailSender: storedEmailSender,
         emailSubject: storedEmailSubject,
         emailBody: storedEmailBody,
-        emailScore: storedEmailScore,     
-        //emailSummary: storedEmailSummary
-        
+        emailScore: storedEmailScore,
+        emailSummary: storedEmailSummary
     });
 });
 
+// GET /api/interactions — returns monthly interaction data
 app.get('/api/interactions', async (req, res) => {
     try {
         const interactions = await dataController.fetchLastFiveMonthsInteractions();
