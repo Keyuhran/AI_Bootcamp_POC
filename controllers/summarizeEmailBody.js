@@ -14,7 +14,7 @@ async function summarizeEmail(emailBody) {
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo', // You can change to 'gpt-3.5-turbo' if needed
+      model: 'gpt-3.5-turbo', 
       messages: [
         {
           role: 'user',

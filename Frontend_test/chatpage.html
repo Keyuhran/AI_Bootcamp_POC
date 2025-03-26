@@ -87,6 +87,13 @@
             <div className="messages-container">
               {messages.map((msg, idx) => (
                 <div key={idx} className={`message-bubble ${msg.sender === "Kieran" ? "user-message" : "bot-message"}`}>
+                  <button className={`analysis-button ${msg.sender === "Kieran" ? "user" : "bot"}`}>
+                    <img 
+                      src={msg.sender === "Kieran" ? "media/Analyse.png" : "media/Analyse.png"} 
+                      alt="Analyze Icon" 
+                      style={{ height: '16px', width: '16px', marginRight: '4px' }}
+                    />
+                  </button>
                   <p>{msg.text}</p>
                   {msg.showDetails && (
                     <button
