@@ -24,8 +24,6 @@
       useEffect(() => {
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
-          console.log("🟡 Initial message from localStorage:", storedMsg);
-
           // Create user message
           const userMessage = {
             text: storedMsg,
@@ -106,7 +104,7 @@
       };
 
       const handleAnalysisClick = () => {
-        setInput("Analyse this file:");
+        setInput("Analyse this file: ");
       };
 
       useEffect(() => {
@@ -180,7 +178,7 @@
                   alt="Analyze Icon" 
                   style={{ height: '16px', width: '16px', marginRight: '4px' }}
                 />
-                Analyse
+                
               </button>
             </form>
           </main>

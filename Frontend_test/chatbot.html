@@ -36,6 +36,10 @@
       const userName = "Kieran"; // Hard-coded, or fetch dynamically
       const [userInput, setUserInput] = useState("");
 
+      const handleAnalysisClick = () => {
+        setUserInput("Analyse this file: ");  // ✅ matches useState
+      };
+
       const handleButtonClick = (label) => {
         alert("You clicked: " + label);
       };
@@ -89,14 +93,27 @@
                 <QuickActionButton label="What are your capabilities?" onClick={() => handleButtonClick("What are your capabilities?")} />
               </div>
 
-              <form className="input-form" onSubmit={handleSubmit}>
+              <form className="input-form-start" onSubmit={handleSubmit}>
                 <input
                   type="text"
                   placeholder="Type here..."
-                  className="chat-input"
+                  className="chat-input-start"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                 />
+
+                <button 
+                type="button" 
+                className="analysis-trigger-button"
+                onClick={handleAnalysisClick}
+              >
+                <img 
+                  src="media/Analyse.png" 
+                  alt="Analyze Icon" 
+                  style={{ height: '16px', width: '16px', marginRight: '4px' }}
+                />
+                
+              </button>
               </form>
             </div>
           </main>
