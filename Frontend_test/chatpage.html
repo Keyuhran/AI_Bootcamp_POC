@@ -57,13 +57,17 @@
 
         const data = await response.json();
         const botMessage = {
-        text: data.summary || data.response,
-        sender: "Bot",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        showDetails: data.showDetails
+          text: data.summary || data.response,
+          sender: "Bot",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          showDetails: data.showDetails
         };
         setMessages(prev => [...prev, botMessage]);
         setSelectedFile(null);
+      };
+
+      const handleAnalysisClick = () => {
+        setInput("Analyse this file:");
       };
 
       useEffect(() => {
@@ -87,13 +91,6 @@
             <div className="messages-container">
               {messages.map((msg, idx) => (
                 <div key={idx} className={`message-bubble ${msg.sender === "Kieran" ? "user-message" : "bot-message"}`}>
-                  <button className={`analysis-button ${msg.sender === "Kieran" ? "user" : "bot"}`}>
-                    <img 
-                      src={msg.sender === "Kieran" ? "media/Analyse.png" : "media/Analyse.png"} 
-                      alt="Analyze Icon" 
-                      style={{ height: '16px', width: '16px', marginRight: '4px' }}
-                    />
-                  </button>
                   <p>{msg.text}</p>
                   {msg.showDetails && (
                     <button
@@ -122,6 +119,18 @@
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
               />
+              <button 
+                type="button" 
+                className="analysis-trigger-button"
+                onClick={handleAnalysisClick}
+              >
+                <img 
+                  src="media/Analyse.png" 
+                  alt="Analyze Icon" 
+                  style={{ height: '16px', width: '16px', marginRight: '4px' }}
+                />
+                Analyse
+              </button>
             </form>
           </main>
         </div>

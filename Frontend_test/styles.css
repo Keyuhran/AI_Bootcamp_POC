@@ -496,3 +496,21 @@ canvas {
 .analysis-button.bot:hover {
   background-color: #3867d6;
 }
+
+.analysis-trigger-button {
+  background-color: #4b7bec;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.analysis-trigger-button:hover {
+  background-color: #3867d6;
+}
