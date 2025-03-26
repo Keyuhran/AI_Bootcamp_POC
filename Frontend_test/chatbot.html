@@ -42,9 +42,14 @@
 
       const handleSubmit = (e) => {
         e.preventDefault();
-        // For now, just alert the user input
-        alert("User typed: " + userInput);
-        setUserInput("");
+
+        if (!userInput.trim()) return;
+
+        // Save message in localStorage
+        localStorage.setItem("initialMessage", userInput);
+
+        // Redirect to chat page
+        window.location.href = "chatpage.html";
       };
 
       return (
@@ -77,36 +82,28 @@
               How can I help you today?
             </h1>
 
-            {/* Row of quick action buttons */}
-            <div className="button-row">
-              <QuickActionButton
-                label="Help me fix my grammar"
-                onClick={() => handleButtonClick("Help me fix my grammar")}
-              />
-              <QuickActionButton
-                label="Help me analyze data"
-                onClick={() => handleButtonClick("Help me analyze data")}
-              />
-              <QuickActionButton
-                label="What are your capabilities?"
-                onClick={() => handleButtonClick("What are your capabilities?")}
-              />
-            </div>
+            <div className="interaction-container">
+              <div className="button-row">
+                <QuickActionButton label="Help me fix my grammar" onClick={() => handleButtonClick("Help me fix my grammar")} />
+                <QuickActionButton label="Help me analyze data" onClick={() => handleButtonClick("Help me analyze data")} />
+                <QuickActionButton label="What are your capabilities?" onClick={() => handleButtonClick("What are your capabilities?")} />
+              </div>
 
-            {/* Input box for user queries */}
-            <form className="input-form" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Type here..."
-                className="chat-input"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-              />
-            </form>
+              <form className="input-form" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Type here..."
+                  className="chat-input"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                />
+              </form>
+            </div>
           </main>
         </div>
       );
     }
+    
 
     const rootElement = document.getElementById("root");
     ReactDOM.createRoot(rootElement).render(<App />);

@@ -21,6 +21,45 @@
 
     function App() {
       const [messages, setMessages] = useState([]);
+      useEffect(() => {
+        const storedMsg = localStorage.getItem("initialMessage");
+        if (storedMsg) {
+          console.log("🟡 Initial message from localStorage:", storedMsg);
+
+          // Create user message
+          const userMessage = {
+            text: storedMsg,
+            sender: "Kieran",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+
+          // Add to chat
+          setMessages(prev => [...prev, userMessage]);
+          localStorage.removeItem("initialMessage");
+
+          // Send to backend
+          fetch('http://localhost:8000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: storedMsg })
+          })
+            .then(res => res.json())
+            .then(data => {
+              const botMessage = {
+                text: data.summary || data.response,
+                sender: "Bot",
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                showDetails: data.showDetails
+              };
+              setMessages(prev => [...prev, botMessage]);
+            })
+            .catch(err => {
+              console.error("❌ Error sending initial message to backend:", err);
+            });
+        }
+      }, []);
+
+
       const [input, setInput] = useState("");
       const [selectedFile, setSelectedFile] = useState(null);
       const messagesEndRef = useRef(null);
@@ -73,6 +112,18 @@
       useEffect(() => {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
       }, [messages]);
+
+      useEffect(() => {
+        const storedInitial = localStorage.getItem("initialMessage");
+        if (storedInitial) {
+          setInput(storedInitial);
+          // Simulate a submit after short delay so input is updated
+          setTimeout(() => {
+            handleSubmit({ preventDefault: () => {} });
+            localStorage.removeItem("initialMessage"); // clear it after use
+          }, 100);
+        }
+      }, []);
 
       return (
         <div className="app-container">

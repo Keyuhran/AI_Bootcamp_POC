@@ -48,7 +48,7 @@
                     
 
                     const icon = document.getElementById('sentiment-icon');
-                    if (data.emailScore > 0.3) {
+                    if (data.emailScore > 0.25) {
                         icon.src = 'media/Happy.png';
                         icon.alt = 'Positive Sentiment';
                     } else if (data.emailScore > 0.15) {

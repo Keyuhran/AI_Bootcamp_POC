@@ -46,7 +46,7 @@ if __name__ == "__main__":
             msg_sender = msg.sender or ""
             msg_subject = msg.subject or ""
             msg_body = msg.body or ""
-            email_text = f"From: {msg_sender}\nSubject: {msg_subject}\n\n{msg_body}".strip()
+            email_text = msg_body
         except:
             # Fallback to text file
             try:
