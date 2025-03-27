@@ -47,12 +47,12 @@ async function fetchTopCategories() {
         .filter(([, count]) => count > 0); // remove categories with 0
   
       const total = sorted.reduce((sum, [, count]) => sum + count, 0);
-      const top3 = sorted.slice(0, 5); // show only top 3
+      const top5 = sorted.slice(0, 5); // show only top 5
   
       const list = document.querySelector(".frequently-asked ul");
       list.innerHTML = ""; // clear previous
   
-      top3.forEach(([category, count]) => {
+      top5.forEach(([category, count]) => {
         const percentage = ((count / total) * 100).toFixed(1);
         const label = category.replace(/_/g, ' '); // optional formatting
         list.innerHTML += `<li>${label} <span>${percentage}%</span></li>`;
