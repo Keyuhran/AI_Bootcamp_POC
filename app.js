@@ -21,6 +21,7 @@ app.use(express.json());
 // Multer setup for file uploads
 const upload = multer({ dest: 'uploads/' });
 
+
 // Serve static files from the `Frontend_test` directory
 const frontendPath = path.join(__dirname, 'Frontend_test');
 app.use(express.static(frontendPath));
@@ -82,6 +83,59 @@ app.post('/analyze-file', upload.single('file'), async (req, res) => {
         }
     });
 });
+
+app.post('/analyze-text', async (req, res) => {
+    let { text } = req.body;
+    if (!text) return res.status(400).json({ error: 'Missing text' });
+
+    // Remove the trigger keyword if present
+    if (text.startsWith("Analyse this file:")) {
+        text = text.replace("Analyse this file:", "").trim();
+    }
+
+    const tempFilePath = `uploads/temp_${Date.now()}.txt`;
+    fs.writeFileSync(tempFilePath, text, 'utf8');
+
+    const python = spawn('python', ['nlp.py', tempFilePath]);
+    let output = '';
+
+    python.stdout.on('data', (data) => output += data.toString());
+    python.stderr.on('data', (data) => console.error("[PYTHON ERROR]:", data.toString()));
+
+    python.on('close', async (code) => {
+        fs.unlink(tempFilePath, () => {});
+        if (code !== 0) {
+            return res.status(500).json({ response: 'Error analyzing text' });
+        }
+
+        try {
+            const json = JSON.parse(output.trim());
+
+            // Save for /details
+            storedEmailText = json.emailText;
+            storedEmailSender = json.emailSender;
+            storedEmailSubject = json.emailSubject;
+            storedEmailBody = json.emailBody;
+            storedEmailScore = json.score;
+            storedEmailSummary = await summarizeEmail(storedEmailBody);
+
+            res.json({
+                summary: `The email you uploaded has a sentiment score of ${storedEmailScore}`,
+                showDetails: true,
+                emailText: storedEmailText,
+                emailSender: storedEmailSender,
+                emailSubject: storedEmailSubject,
+                emailBody: storedEmailBody,
+                emailScore: storedEmailScore,
+                emailSummary: storedEmailSummary
+            });
+        } catch (err) {
+            console.error("JSON parse error:", err);
+            res.json({ response: output.trim() });
+        }
+    });
+});
+  
 
 // GET /get-email-content — serves stored email text
 app.get('/get-email-content', (req, res) => {

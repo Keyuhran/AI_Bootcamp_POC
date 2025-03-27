@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <title>Chatbot UI</title>
   <link rel="stylesheet" type="text/css" href="styles.css" />
- 
-  
 </head>
 <body>
   <div id="root"></div>
@@ -17,13 +15,11 @@
   <!-- React and ReactDOM from CDNs -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel for in-browser JSX transpilation -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="text/babel">
     const { useState } = React;
-    
-    // A quick sub-component for the 3 main buttons
+
     function QuickActionButton({ label, onClick }) {
       return (
         <button className="quick-action-button" onClick={onClick}>
@@ -33,11 +29,11 @@
     }
 
     function App() {
-      const userName = "Kieran"; // Hard-coded, or fetch dynamically
+      const userName = "Kieran";
       const [userInput, setUserInput] = useState("");
 
       const handleAnalysisClick = () => {
-        setUserInput("Analyse this file: ");  // ✅ matches useState
+        setUserInput("Analyse this file: ");
       };
 
       const handleButtonClick = (label) => {
@@ -46,39 +42,32 @@
 
       const handleSubmit = (e) => {
         e.preventDefault();
-
         if (!userInput.trim()) return;
 
-        // Save message in localStorage
+        // Store and route to chatpage
         localStorage.setItem("initialMessage", userInput);
-
-        // Redirect to chat page
         window.location.href = "chatpage.html";
       };
 
       return (
         <div className="app-container">
-          {/* Sidebar with icons */}
           <aside className="sidebar">
             <div className="icon-wrapper">
-              {/* Sample data URI icon (a basic circle).
-                  Replace with your own or reference an external file. */}
               <img
-                src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32' xmlns='http://www.w3.org/2000/svg'><circle cx='16' cy='16' r='16'/></svg>"
+                src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><circle cx='16' cy='16' r='16'/></svg>"
                 alt="Analytics"
               />
               <span>Analytics</span>
             </div>
             <div className="icon-wrapper">
               <img
-                src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32' xmlns='http://www.w3.org/2000/svg'><rect x='4' y='4' width='24' height='24'/></svg>"
+                src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><rect x='4' y='4' width='24' height='24'/></svg>"
                 alt="Advanced Reasoning"
               />
               <span>Advanced Reasoning</span>
             </div>
           </aside>
 
-          {/* Main content area */}
           <main className="main-content">
             <h1 className="greeting">
               Good evening, {userName}
@@ -101,26 +90,23 @@
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                 />
-
                 <button 
-                type="button" 
-                className="analysis-trigger-button"
-                onClick={handleAnalysisClick}
-              >
-                <img 
-                  src="media/Analyse.png" 
-                  alt="Analyze Icon" 
-                  style={{ height: '16px', width: '16px', marginRight: '4px' }}
-                />
-                
-              </button>
+                  type="button" 
+                  className="analysis-trigger-button"
+                  onClick={handleAnalysisClick}
+                >
+                  <img 
+                    src="media/Analyse.png" 
+                    alt="Analyze Icon" 
+                    style={{ height: '16px', width: '16px', marginRight: '4px' }}
+                  />
+                </button>
               </form>
             </div>
           </main>
         </div>
       );
     }
-    
 
     const rootElement = document.getElementById("root");
     ReactDOM.createRoot(rootElement).render(<App />);

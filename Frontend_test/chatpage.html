@@ -21,28 +21,41 @@
 
     function App() {
       const [messages, setMessages] = useState([]);
+      const [input, setInput] = useState("");
+      const [selectedFile, setSelectedFile] = useState(null);
+      const messagesEndRef = useRef(null);
+
       useEffect(() => {
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
-          // Create user message
           const userMessage = {
             text: storedMsg,
             sender: "Kieran",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
-          // Add to chat
           setMessages(prev => [...prev, userMessage]);
           localStorage.removeItem("initialMessage");
 
-          // Send to backend
-          fetch('http://localhost:8000/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: storedMsg })
-          })
-            .then(res => res.json())
-            .then(data => {
+          let response;
+          const fetchResponse = async () => {
+            try {
+              if (storedMsg.startsWith("Analyse this file:")) {
+                const cleanText = storedMsg.replace("Analyse this file:", "").trim();
+                response = await fetch("http://localhost:3000/analyze-text", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ text: cleanText })
+                });
+              } else {
+                response = await fetch("http://localhost:8000/chat", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ content: storedMsg })
+                });
+              }
+
+              const data = await response.json();
               const botMessage = {
                 text: data.summary || data.response,
                 sender: "Bot",
@@ -50,17 +63,14 @@
                 showDetails: data.showDetails
               };
               setMessages(prev => [...prev, botMessage]);
-            })
-            .catch(err => {
+            } catch (err) {
               console.error("❌ Error sending initial message to backend:", err);
-            });
+            }
+          };
+
+          fetchResponse();
         }
       }, []);
-
-
-      const [input, setInput] = useState("");
-      const [selectedFile, setSelectedFile] = useState(null);
-      const messagesEndRef = useRef(null);
 
       const handleSubmit = async (e) => {
         e.preventDefault();
@@ -71,7 +81,7 @@
           sender: "Kieran",
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-        
+
         setMessages(prev => [...prev, userMessage]);
         setInput("");
 
@@ -84,10 +94,17 @@
             method: 'POST',
             body: formData
           });
+        } else if (input.startsWith("Analyse this file:")) {
+          const cleanText = input.replace("Analyse this file:", "").trim();
+          response = await fetch("http://localhost:3000/analyze-text", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: cleanText })
+          });
         } else {
-          response = await fetch('http://localhost:8000/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          response = await fetch("http://localhost:8000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ content: input })
           });
         }
@@ -110,18 +127,6 @@
       useEffect(() => {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
       }, [messages]);
-
-      useEffect(() => {
-        const storedInitial = localStorage.getItem("initialMessage");
-        if (storedInitial) {
-          setInput(storedInitial);
-          // Simulate a submit after short delay so input is updated
-          setTimeout(() => {
-            handleSubmit({ preventDefault: () => {} });
-            localStorage.removeItem("initialMessage"); // clear it after use
-          }, 100);
-        }
-      }, []);
 
       return (
         <div className="app-container">
@@ -178,7 +183,6 @@
                   alt="Analyze Icon" 
                   style={{ height: '16px', width: '16px', marginRight: '4px' }}
                 />
-                
               </button>
             </form>
           </main>

@@ -38,6 +38,9 @@ def get_sentiment_score(text):
 if __name__ == "__main__":
     file_path = sys.argv[1]
     email_text = None
+    msg_sender = ""
+    msg_subject = ""
+    msg_body = ""
 
     try:
         # Try parsing as .msg
@@ -48,13 +51,15 @@ if __name__ == "__main__":
             msg_body = msg.body or ""
             email_text = msg_body
         except:
-            # Fallback to text file
+            # Fallback to plain text file
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     email_text = f.read()
+                    msg_body = email_text  # Fill fallback msg_body
             except UnicodeDecodeError:
                 with open(file_path, 'r', encoding='latin-1') as f:
                     email_text = f.read()
+                    msg_body = email_text
     except Exception as e:
         print(json.dumps({"error": f"Failed to extract email: {str(e)}"}))
         sys.exit(1)
@@ -71,9 +76,9 @@ if __name__ == "__main__":
 
     result = {
         "emailText": email_text,
-        "emailSender": msg.sender,
-        "emailSubject": msg.subject,
-        "emailBody": msg.body,
+        "emailSender": msg_sender,
+        "emailSubject": msg_subject,
+        "emailBody": msg_body,
         "summary": f"The email you uploaded has a sentiment score of {sentiment_score}.",
         "score": sentiment_score,
         "showDetails": True
