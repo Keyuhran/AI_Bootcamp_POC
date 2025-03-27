@@ -165,7 +165,7 @@
                               "Content-Type": "application/json",
                             },
                             body: JSON.stringify({
-                              description: msg.originalInput || "No input provided",
+                              description: (msg.originalInput || "No input provided").replace(/^Analyse this file:\s*/i, ""),
                               category: "Other",
                               sentiment: msg.score || 0.0,
                             }),
