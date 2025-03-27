@@ -59,7 +59,7 @@ async function fetchAllCategoryCounts() {
   const categories = [
     'Colour_of_water', 'Taste_of_water', 'Smell_of_water',
     'Water_pressure', 'Water_leakage', 'Water_quality',
-    'Water_temperature', 'flooding', 'Other'
+    'Water_temperature', 'Flooding', 'Testing_services', 'Other'
   ];
 
   const results = {};
