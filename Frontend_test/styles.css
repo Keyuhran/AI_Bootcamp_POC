@@ -567,3 +567,9 @@ body {
     opacity: 1;
   }
 }
+
+.frequently-asked li {
+  font-size: 1.5rem; /* Increase this value if needed */
+  font-weight: bold;
+  margin-bottom: 8px;
+}

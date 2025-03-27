@@ -47,7 +47,7 @@ async function fetchTopCategories() {
         .filter(([, count]) => count > 0); // remove categories with 0
   
       const total = sorted.reduce((sum, [, count]) => sum + count, 0);
-      const top3 = sorted.slice(0, 3); // show only top 3
+      const top3 = sorted.slice(0, 5); // show only top 3
   
       const list = document.querySelector(".frequently-asked ul");
       list.innerHTML = ""; // clear previous
