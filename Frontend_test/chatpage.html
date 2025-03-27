@@ -166,7 +166,7 @@
                             },
                             body: JSON.stringify({
                               description: (msg.originalInput || "No input provided").replace(/^Analyse this file:\s*/i, ""),
-                              category: "Other",
+                              //category: "NULL",
                               sentiment: msg.score || 0.0,
                             }),
                           });

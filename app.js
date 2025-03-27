@@ -138,20 +138,32 @@ app.post('/analyze-text', async (req, res) => {
 });
   
 app.post('/create-enquiry', async (req, res) => {
-    const { description, category, sentiment } = req.body;
-    if (!description || !category || typeof sentiment !== 'number') {
+    const { description, sentiment } = req.body;
+    if (!description || typeof sentiment !== 'number') {
       return res.status(400).json({ error: "Missing enquiry data" });
     }
   
     try {
-      const result = await dataController.createEnquiry(description, category, sentiment);
+      const cleanedDescription = description.replace(/^Analyse this file:\s*/i, "").trim();
+  
+      // 🔍 Categorize based on actual input
+      const category = await categorizeEmail(cleanedDescription);
+  
+      // ✅ Correctly placed log
+      console.log("🟡 Enquiry request:", {
+        cleanedDescription,
+        category,
+        sentiment
+      });
+  
+      const result = await dataController.createEnquiry(cleanedDescription, category, sentiment);
       res.json({ message: "Enquiry created", result });
     } catch (error) {
       console.error("❌ Failed to create enquiry:", error);
       res.status(500).json({ error: "Failed to create enquiry" });
     }
   });
-  
+
 // GET /get-email-content — serves stored email text
 app.get('/get-email-content', (req, res) => {
     res.json({
@@ -185,6 +197,30 @@ app.get('/api/categories', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch category data' });
     }
   });
+
+// ✅ Update to your app.js
+const { categorizeEmail } = require('./controllers/categorization');
+
+app.post('/create-enquiry', async (req, res) => {
+  const { description, sentiment } = req.body;
+  if (!description || typeof sentiment !== 'number') {
+    return res.status(400).json({ error: "Missing enquiry data" });
+  }
+
+  try {
+    const cleanedDescription = description.replace(/^Analyse this file:\s*/i, "").trim();
+
+    // 🔍 Categorize based on actual input
+    const category = await categorizeEmail(cleanedDescription);
+
+    const result = await dataController.createEnquiry(cleanedDescription, category, sentiment);
+    res.json({ message: "Enquiry created", result });
+  } catch (error) {
+    console.error("❌ Failed to create enquiry:", error);
+    res.status(500).json({ error: "Failed to create enquiry" });
+  }
+});
+
 
 // Route: serve `details.html`
 app.get('/details', (req, res) => {
