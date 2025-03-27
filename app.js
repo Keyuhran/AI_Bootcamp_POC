@@ -9,6 +9,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const { summarizeEmail } = require('./controllers/summarizeEmailBody');
 
+
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
@@ -136,7 +137,21 @@ app.post('/analyze-text', async (req, res) => {
     });
 });
   
-
+app.post('/create-enquiry', async (req, res) => {
+    const { description, category, sentiment } = req.body;
+    if (!description || !category || typeof sentiment !== 'number') {
+      return res.status(400).json({ error: "Missing enquiry data" });
+    }
+  
+    try {
+      const result = await dataController.createEnquiry(description, category, sentiment);
+      res.json({ message: "Enquiry created", result });
+    } catch (error) {
+      console.error("❌ Failed to create enquiry:", error);
+      res.status(500).json({ error: "Failed to create enquiry" });
+    }
+  });
+  
 // GET /get-email-content — serves stored email text
 app.get('/get-email-content', (req, res) => {
     res.json({

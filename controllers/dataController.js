@@ -8,79 +8,94 @@ const supabaseUrl = 'https://gnhhkqqahqwdfszpiyfb.supabase.co';
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// ========================
+// Interaction Data
+// ========================
 
-// async function to fetch interaction counts by month using SQL RPC function
 async function fetchInteractionsCountByMonth(targetMonth) {
-    const { data, error } = await supabase
-      .rpc('get_interactions_by_month', { target_month: targetMonth });
-  
-    if (error) {
-      console.error('Error fetching interactions:', error);
-      return null;
-    }
-  
-    return data.length;
-  }
-  
-  // Function to automatically fetch counts for the current month and the past 4 months
-  async function fetchLastFiveMonthsInteractions() {
-    const results = {};
-    const currentDate = new Date();
-  
-    for (let i = 0; i < 5; i++) {
-      const targetMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      const formattedMonth = targetMonth.toISOString().split('T')[0];
-      const count = await fetchInteractionsCountByMonth(formattedMonth);
-      results[formattedMonth] = count;
-    }
-  
-    console.log('Interaction counts for the current month and past 4 months:', results);
-    return results;
+  const { data, error } = await supabase.rpc('get_interactions_by_month', { target_month: targetMonth });
+
+  if (error) {
+    console.error('Error fetching interactions:', error);
+    return null;
   }
 
+  return data.length;
+}
 
-  async function fetchCategoryCount(category) {
-    const { data, error } = await supabase.rpc('get_enquiry_by_category', {
-      target_category: category
-    });
-  
-    if (error) {
-      console.error(`Error fetching category '${category}':`, error);
-      return 0;
-    }
-  
-    return data.length || 0;
-  }
-  
-  async function fetchAllCategoryCounts() {
-    const categories = [
-      'Colour_of_water', 'Taste_of_water', 'Smell_of_water',
-      'Water_pressure', 'Water_leakage', 'Water_quality',
-      'Water_temperature', 'flooding', 'Other'
-    ];
-  
-    const results = {};
-    for (const category of categories) {
-      const count = await fetchCategoryCount(category);
-      results[category] = count;
-    }
-  
+async function fetchLastFiveMonthsInteractions() {
+  const results = {};
+  const currentDate = new Date();
 
-    console.log ('Category counts:', results);
-    return results;
+  for (let i = 0; i < 5; i++) {
+    const targetMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+    const formattedMonth = targetMonth.toISOString().split('T')[0];
+    const count = await fetchInteractionsCountByMonth(formattedMonth);
+    results[formattedMonth] = count;
   }
-  
-  // Testing the function
-//   fetchLastFiveMonthsInteractions().then(counts => {
-//     console.log('Fetched counts:', counts);
-//   }).catch(error => {
-//     console.error('Error:', error);
-//   });
-  
-  module.exports = {
-    fetchInteractionsCountByMonth,
-    fetchLastFiveMonthsInteractions,
-    fetchCategoryCount,
-    fetchAllCategoryCounts
-  };
-  
+
+  console.log('Interaction counts for the current month and past 4 months:', results);
+  return results;
+}
+
+// ========================
+// Category Data
+// ========================
+
+async function fetchCategoryCount(category) {
+  const { data, error } = await supabase.rpc('get_enquiry_by_category', {
+    target_category: category
+  });
+
+  if (error) {
+    console.error(`Error fetching category '${category}':`, error);
+    return 0;
+  }
+
+  return data.length || 0;
+}
+
+async function fetchAllCategoryCounts() {
+  const categories = [
+    'Colour_of_water', 'Taste_of_water', 'Smell_of_water',
+    'Water_pressure', 'Water_leakage', 'Water_quality',
+    'Water_temperature', 'flooding', 'Other'
+  ];
+
+  const results = {};
+  for (const category of categories) {
+    const count = await fetchCategoryCount(category);
+    results[category] = count;
+  }
+
+  console.log('Category counts:', results);
+  return results;
+}
+
+async function createEnquiry(description, category, sentiment) {
+  const { data, error } = await supabase.rpc('create_enquiry', {
+    new_description: description,
+    new_category: category,
+    new_sentiment: sentiment
+  });
+
+  if (error) {
+    console.error('Error creating enquiry:', error);
+    return null;
+  }
+
+  console.log('Enquiry created:', data);
+  return data;
+}
+
+// ========================
+// Exports
+// ========================
+
+module.exports = {
+  fetchInteractionsCountByMonth,
+  fetchLastFiveMonthsInteractions,
+  fetchCategoryCount,
+  fetchAllCategoryCounts,
+  createEnquiry
+};

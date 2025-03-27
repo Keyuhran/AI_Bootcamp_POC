@@ -60,8 +60,12 @@
                 text: data.summary || data.response,
                 sender: "Bot",
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                showDetails: data.showDetails
+                showDetails: data.showDetails,
+                score: data.emailScore || data.score,
+                originalInput: storedMsg // 🟢 Store the actual user input here
               };
+
+              
               setMessages(prev => [...prev, botMessage]);
             } catch (err) {
               console.error("❌ Error sending initial message to backend:", err);
@@ -86,6 +90,8 @@
         setInput("");
 
         let response;
+        let originalInput = input;
+
         if (selectedFile) {
           const formData = new FormData();
           formData.append("file", selectedFile);
@@ -96,6 +102,7 @@
           });
         } else if (input.startsWith("Analyse this file:")) {
           const cleanText = input.replace("Analyse this file:", "").trim();
+          originalInput = cleanText;
           response = await fetch("http://localhost:3000/analyze-text", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -114,7 +121,9 @@
           text: data.summary || data.response,
           sender: "Bot",
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          showDetails: data.showDetails
+          showDetails: data.showDetails,
+          score: data.emailScore || data.score,
+          originalInput: originalInput // 🟢 Store the real input text
         };
         setMessages(prev => [...prev, botMessage]);
         setSelectedFile(null);
@@ -148,7 +157,25 @@
                   <p>{msg.text}</p>
                   {msg.showDetails && (
                     <button
-                      onClick={() => window.location.href = `/details?score=${msg.score}`}
+                      onClick={async () => {
+                        try {
+                          await fetch("http://localhost:3000/create-enquiry", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              description: msg.originalInput || "No input provided",
+                              category: "Other",
+                              sentiment: msg.score || 0.0,
+                            }),
+                          });
+
+                          window.location.href = "/details?score=" + msg.score;
+                        } catch (err) {
+                          console.error("❌ Failed to register enquiry:", err);
+                        }
+                      }}
                       className="details-button"
                     >
                       View Details
