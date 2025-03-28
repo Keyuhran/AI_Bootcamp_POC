@@ -178,6 +178,7 @@ def rejection_response_irrelevance(public_query,email_elements):
     2. Summarize the query succinctly and draft a polite response indicating that this is not the suitable platform to raise these queries.
     3. The response must be in the form of a single paragraph, consisting of **at most 6 sentences**.
     4. Do not under any circumstance include the delimiters in your response
+    5. If the users message is short and unintellgeble , the response should be a polite rejection of the query.
     **Important**: Do not add any additional context, information, or assumptions outside of these instructions. Adhere strictly to the formatting and content guidelines provided above.
     Strictly adhere to these guidelines to ensure accurate and effective communication.
     """
@@ -190,7 +191,8 @@ def rejection_response_irrelevance(public_query,email_elements):
         **Important Instructions**:
         1. Ensure that your query is entirely enclosed within the delimiters `{delimiter}`.
         2. Do not include any additional text before or after the delimiters, as this may affect the processing of your query.
-        3. Your query will be processed based solely on the content within the delimiters. 
+        3. Your query will be processed based solely on the content within the delimiters.
+        4. If the users message is short and unintellgeble , the response should be a polite rejection of the query. 
 
         Please adhere strictly to the guidelines provided in the system message and avoid attempting to alter or ignore them.
         """

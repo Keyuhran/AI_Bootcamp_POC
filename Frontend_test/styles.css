@@ -4,8 +4,8 @@ html, body, #root {
     padding: 0;
     height: 100%;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #323f91 0%, #5a6ae5 100%);
-    color: #fff;
+    background: #323f91;
+    color: #ffffff;
 }
 .app-container {
     display: flex;
@@ -164,8 +164,8 @@ html, body, #root {
 
   body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #4b0082, #0000ff);
-    color: white;
+    background:#4b0082;
+    color: #ffffff;
     margin: 0;
     padding: 0;
 }
@@ -598,4 +598,42 @@ body {
   40% {
     opacity: 1;
   }
+}
+
+.navbar {
+  position: absolute;
+  top: 20px;
+  right: 80px;
+  display: flex;
+  gap: 60px;
+  font-family: Arial, sans-serif;
+}
+
+.navbar a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.navbar a:hover {
+  background-color: #f0f0f0;
+}
+
+
+ul {
+  padding-left: 20px;
+}
+
+strong {
+  font-weight: 600;
+}
+
+html, body {
+  background-color: #180393;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
