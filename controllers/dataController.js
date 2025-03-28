@@ -25,18 +25,23 @@ async function fetchInteractionsCountByMonth(targetMonth) {
 
 async function fetchLastFiveMonthsInteractions() {
   const results = {};
-  const currentDate = new Date();
+  const now = new Date();
 
   for (let i = 0; i < 5; i++) {
-    const targetMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-    const formattedMonth = targetMonth.toISOString().split('T')[0];
+    const targetDate = new Date(now);
+    targetDate.setDate(1); // Set to 1st of the month
+    targetDate.setMonth(now.getMonth() - i); // Go back i months
+
+    const formattedMonth = targetDate.toISOString().split('T')[0];
     const count = await fetchInteractionsCountByMonth(formattedMonth);
     results[formattedMonth] = count;
   }
 
-  console.log('Interaction counts for the current month and past 4 months:', results);
+  console.log('✅ Interaction counts for the current and past 4 months:', results);
   return results;
 }
+
+
 
 // ========================
 // Category Data
