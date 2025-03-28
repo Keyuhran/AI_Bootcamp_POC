@@ -26,6 +26,13 @@
       const messagesEndRef = useRef(null);
 
       useEffect(() => {
+        // 🔵 Log interaction once page loads
+        fetch("http://localhost:3000/create-interaction", {
+          method: "POST",
+        }).then(res => {
+          if (!res.ok) console.error("❌ Failed to create interaction");
+        });
+
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
           const userMessage = {
@@ -62,10 +69,9 @@
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 showDetails: data.showDetails,
                 score: data.emailScore || data.score,
-                originalInput: storedMsg // 🟢 Store the actual user input here
+                originalInput: storedMsg
               };
 
-              
               setMessages(prev => [...prev, botMessage]);
             } catch (err) {
               console.error("❌ Error sending initial message to backend:", err);

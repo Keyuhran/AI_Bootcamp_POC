@@ -88,6 +88,21 @@ async function createEnquiry(description, category, sentiment) {
   return data;
 }
 
+
+async function createInteraction() {
+  const { data, error } = await supabase.rpc('create_interaction', {
+  });
+
+  if (error) {
+    console.error('Error creating interaction:', error);
+    return null;
+  }
+return data;
+}
+
+
+
+
 // ========================
 // Exports
 // ========================
@@ -97,5 +112,6 @@ module.exports = {
   fetchLastFiveMonthsInteractions,
   fetchCategoryCount,
   fetchAllCategoryCounts,
-  createEnquiry
+  createEnquiry,
+  createInteraction
 };

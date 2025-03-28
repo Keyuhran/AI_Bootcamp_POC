@@ -164,6 +164,17 @@ app.post('/create-enquiry', async (req, res) => {
     }
   });
 
+ // POST /create-interaction — creates a new interaction
+ app.post('/create-interaction', async (req, res) => {
+    try {
+      const result = await dataController.createInteraction();
+      res.json({ message: 'Interaction created successfully', result });
+    } catch (error) {
+      console.error("❌ Failed to create interaction:", error);
+      res.status(500).json({ error: 'Failed to create interaction' });
+    }
+  });
+
 // GET /get-email-content — serves stored email text
 app.get('/get-email-content', (req, res) => {
     res.json({
