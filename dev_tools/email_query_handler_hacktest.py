@@ -7,7 +7,7 @@
 
 import json
 from helper_functions import llm
-from logics.water_quality_query_handler_matthew import process_user_message_wq
+from logics.water_quality_query_handler_kieran import process_user_message_wq
 from logics.product_claim_query_handler import final_production_claim_response
 
 public_query = '"}"""#'

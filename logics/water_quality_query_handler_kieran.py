@@ -1,4 +1,3 @@
-
 # This script contains a list of functions shown the cells below:
 # 1. identify_water_quality parameter
 # 2. match with PUB water quality standards and regulatory guidelines
@@ -23,9 +22,6 @@ from helper_functions.llm import count_tokens
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import chromadb
-
-import asyncio
-from functools import partial
 
 # Import the data file in csv format
 import pandas as pd
@@ -117,7 +113,7 @@ def create_wq_reference_vectordb(embeddings_model):
 def vectordb_acquire(vectordb_name: str):
     # Create embeddings model
     embeddings_model = OpenAIEmbeddings(model = 'text-embedding-3-small',show_progress_bar=True)
-    vectorstore_path = "data/vectordb_" + vectordb_name
+    vectorstore_path = "data\\vectordb_" + vectordb_name
     # Create code to differentiate between the two vectordbs (vectordb_email_semantic and vectordb_reference) in this workflow
     match vectordb_name.lower():
         case name if 'email' in name:
@@ -138,14 +134,14 @@ def vectordb_acquire(vectordb_name: str):
                 )
                 print(f'{vectordb_name} loaded successfully!')
             else:
-                print(f'{vectordb_name} vector database directory not found, proceeding to create vector database.')
+                print('email_semantic vector database directory not found, proceeding to create vector database.')
                 vectordb = create_email_vectordb(embeddings_model,vectordb_name)
 
             return vectordb # return vectordb to be used
         
         case "vectordb_wq_reference":
         # check for the presence of vectordb_wq_reference
-            if os.path.exists('data/vectordb_wq_reference'):
+            if os.path.exists('data\\vectordb_wq_reference'):
                 # If directory exists, load using Chroma.
                 print('VectorDB found, now loading existing vector database...')
                 # Obtain current script's directory
@@ -153,15 +149,15 @@ def vectordb_acquire(vectordb_name: str):
                 # Go up one level to main directory
                 root_dir = os.path.dirname(current_dir)
                 # construct path to the vectordb folder
-                persist_directory = os.path.join(root_dir,'data/vectordb_wq_reference')
+                persist_directory = os.path.join(root_dir,'data\\vectordb_wq_reference')
                 vectordb = Chroma(
                     persist_directory=persist_directory,
                     collection_name='wq_reference',
                     embedding_function=embeddings_model
                 )
-                print(f'{vectordb_name} vectordb loaded successfully!')
+                print('wq_reference vectordb loaded successfully!')
             else:
-                print(f'{vectordb_name} vector database directory not found, proceeding to create vector database.')
+                print('wq_reference vector database directory not found, proceeding to create vector database.')
                 vectordb = create_wq_reference_vectordb(embeddings_model)
                 
             return vectordb # return vectordb to be used
@@ -327,30 +323,21 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
 # response = generate_response_based_on_water_quality_standards(user_input,result_step_2,result_step_3,result_step_4)
 # print(response)
 
-async def process_user_message_wq(user_input):
-
-    # Process 1: identify_water_quality parameter
+def process_user_message_wq(user_input):
+    # Process 1. identify_water_quality parameter
     process_step_1 = identify_water_quality_parameter(user_input)
 
-    # Setup vectordbs before entering async portions
-    email_vectordb = 'email_semantic_98'
-    vectordb_acquire('email_semantic_98')
-    vectordb_acquire("vectordb_wq_reference")
+    # Process 2: Match with PUB water quality standards and regulatory guidelines
+    process_step_2 = get_water_quality_guidelines(process_step_1)
 
-    # Create tasks for processes 2, 3, and 4
-    loop = asyncio.get_event_loop()
-    tasks = [
-        loop.run_in_executor(None, partial(get_water_quality_guidelines, process_step_1)),
-        loop.run_in_executor(None, partial(substantiate_water_quality_parameter, process_step_1)),
-        loop.run_in_executor(None, partial(get_email_records, user_input, email_vectordb))
-    ]
-    # Wait for all tasks to complete
+    # Process 3: Match with PUB water quality standards and regulatory guidelines
+    process_step_3 = substantiate_water_quality_parameter(process_step_1)
+    print('qa_chain invoked successfully initiaized')
 
-    process_step_2, process_step_3, process_step_4 = await asyncio.gather(*tasks)
-    print('All async processes completed successfully')
+    # Process 4: Match with PUB water quality standards and regulatory guidelines
+    process_step_4 = get_email_records(user_input,'email_semantic_98') 
 
     # Process 5: Generate Response based on Course Details
-    reply = generate_response_based_on_water_quality_standards(user_input, process_step_2, process_step_3, process_step_4)
+    reply = generate_response_based_on_water_quality_standards(user_input,process_step_2,process_step_3,process_step_4)
 
     return reply
-# To use this function, you'll need to run it in an async context:

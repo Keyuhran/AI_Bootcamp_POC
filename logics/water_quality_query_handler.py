@@ -62,11 +62,11 @@ def create_email_vectordb(embeddings_model,vectordb_name):
 
 def create_wq_reference_vectordb(embeddings_model):
     # Load in documents 
-    loader_eph = PyPDFLoader('data\code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.pdf')
+    loader_eph = PyPDFLoader('data\code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.md')
     doc_eph = loader_eph.load()
-    loader_who = PyPDFLoader('data\WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.pdf')
+    loader_who = PyPDFLoader('data\WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.md')
     doc_who = loader_who.load()
-    loader_sfa = PyPDFLoader('data\Environmental Public Health (Water suitable for drinking)(No. 2) Regulations SFA Apr 2019.pdf')
+    loader_sfa = PyPDFLoader('data\Environmental Public Health (Water suitable for drinking)(No. 2) Regulations SFA Apr 2019.md')
     doc_sfa = loader_sfa.load()
  
     # Creating character splitter for document splitting and chunking
