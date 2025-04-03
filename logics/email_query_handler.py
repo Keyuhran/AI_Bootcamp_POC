@@ -85,7 +85,8 @@ async def intermediate_response(public_query,query_category_result):
     if query_category_result['water quality']:
         # pass into water_quality_handler.py
         print('True for water_quality testing category')
-        water_quality_response = sync_process_user_message_wq(public_query)       
+        water_quality_response = await run_process_user_message_wq(public_query)
+     
 
     if query_category_result['water testing request']:
         print('True for water testing request')
@@ -137,9 +138,9 @@ def water_testing_query_handler(public_query):
 def response_consolidation(query_category,water_quality_response, water_testing_response, product_claim_response,public_query,email_elements):
     print('Individual queries completed. Now consolidating...')
     # Check for presence of vectordb
-    vectordb = vectordb_acquire("email_semantic_98")
-    #vectordb = vectordb_acquire("wq_reference")
-    email_reference = vectordb.similarity_search_with_relevance_scores(public_query, k=4)
+    email_vectordb = vectordb_acquire("email_semantic_98")
+    wq_reference_vectordb = vectordb_acquire("wq_reference")
+    email_reference = email_vectordb.similarity_search_with_relevance_scores(public_query, k=4)
 
     delimiter = "###"
     system_message = f"""
