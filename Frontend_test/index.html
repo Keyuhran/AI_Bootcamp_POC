@@ -43,7 +43,7 @@
       };
 
       const handleButtonClick = (label) => {
-        alert("You clicked: " + label);
+        setUserInput(label);
       };
 
       const handleSubmit = (e) => {
@@ -83,9 +83,9 @@
 
             <div className="interaction-container">
               <div className="button-row">
-                <QuickActionButton label="Help me fix my grammar" onClick={() => handleButtonClick("Help me fix my grammar")} />
-                <QuickActionButton label="Help me analyze data" onClick={() => handleButtonClick("Help me analyze data")} />
-                <QuickActionButton label="What are your capabilities?" onClick={() => handleButtonClick("What are your capabilities?")} />
+                <QuickActionButton label="What is the maximum allowed concentration for boron?" onClick={() => handleButtonClick("What is the maximum allowed concentration for boron?")} />
+                <QuickActionButton label="What is a safe pH level for drinking water?" onClick={() => handleButtonClick("What is a safe pH level for drinking water?")} />
+                <QuickActionButton label="What is the maximum allowed concentration of Chlorine?" onClick={() => handleButtonClick("What is the maximum allowed concentration of Chlorine?")} />
               </div>
 
               <form className="input-form-start" onSubmit={handleSubmit}>
