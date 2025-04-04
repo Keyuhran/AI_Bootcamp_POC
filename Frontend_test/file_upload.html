@@ -8,26 +8,37 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #f0f6fc;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
     }
+  
   </style>
 </head>
 <body>
-    <div class="logo-container">
-        <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
-        <div class="navbar">
-          <a href="index.html">Home</a>
-          <a href="data.html">Statistics</a>
-          <a href="file_upload.html">File Upload</a>
-          <a href="about.html">About Us</a>
-        </div>
-      </div>
-      
-  <div class="upload-container">
+  <div class="modal" id="auth-modal">
+    <div class="modal-content">
+      <h2>Enter Password to Access</h2>
+      <form id="auth-form" onsubmit="event.preventDefault(); validatePassword();">
+        <input type="password" id="password-input" placeholder="Enter password..." />
+        <button type="submit">Submit</button>
+      </form>
+      <p id="error-msg" style="color:red; display:none; margin-top:10px;">Incorrect password</p>
+    </div>
+  </div>
+
+  <div class="logo-container">
+    <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+    <div class="navbar">
+      <a href="index.html">Home</a>
+      <a href="data.html">Statistics</a>
+      <a href="file_upload.html">File Upload</a>
+      <a href="about.html">About Us</a>
+    </div>
+  </div>
+
+  <div class="upload-container" style="display:none" id="upload-section">
     <div class="upload-header">Upload the report</div>
     <div class="upload-subtext">Make sure the file format meets the requirements. It must be <code>.msg</code></div>
 
@@ -36,7 +47,7 @@
       <p><strong>Drag & Drop</strong></p>
       <p>or <label for="fileInput" class="choose-file-label">choose files</label></p>
       <input type="file" id="fileInput" accept=".msg" multiple />
-      <p style="font-size: 0.8rem; color: #8b949e; margin-top: 10px;">Upload emails to the database here</p>
+      <p style="font-size: 0.8rem; margin-top: 10px;">Upload emails to the database here</p>
       <div id="file-name" class="file-name-display"></div>
     </div>
 
@@ -46,11 +57,39 @@
       <button class="btn btn-cancel" onclick="resetForm()">Cancel</button>
       <button class="btn btn-submit" onclick="submitForm()">Submit</button>
     </div>
-
-
   </div>
 
   <script>
+    async function validatePassword() {
+      const input = document.getElementById("password-input").value;
+
+      try {
+        const res = await fetch("/verify-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: input })
+        });
+
+        if (res.ok) {
+          localStorage.setItem("uploadAuthTimestamp", Date.now());
+          document.getElementById("auth-modal").style.display = "none";
+          document.getElementById("upload-section").style.display = "block";
+        } else {
+          document.getElementById("error-msg").style.display = "block";
+        }
+      } catch (err) {
+        console.error("Password verification error:", err);
+      }
+    }
+
+    window.onload = () => {
+      const authTime = localStorage.getItem("uploadAuthTimestamp");
+      if (authTime && (Date.now() - parseInt(authTime) < 10 * 60 * 1000)) {
+        document.getElementById("auth-modal").style.display = "none";
+        document.getElementById("upload-section").style.display = "block";
+      }
+    };
+
     const fileInput = document.getElementById("fileInput");
     const statusBox = document.getElementById("upload-status");
     const fileNameBox = document.getElementById("file-name");

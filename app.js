@@ -6,6 +6,7 @@ const { createClient } = require('@supabase/supabase-js');
 const dataController = require('./controllers/dataController');
 const multer = require('multer');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
 const { spawn } = require('child_process');
 const { summarizeEmail } = require('./controllers/summarizeEmailBody');
 const { categorizeEmail } = require('./controllers/categorization');
@@ -33,6 +34,19 @@ let storedEmailSubject = "";
 let storedEmailBody = "";
 let storedEmailScore = 0;
 let storedEmailSummary = "";
+
+
+const hashedPassword = process.env.UPLOAD_PASSWORD_HASH;
+
+app.post('/verify-password', async (req, res) => {
+  const { password } = req.body;
+  const valid = await bcrypt.compare(password, hashedPassword);
+  if (valid) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(401);
+  }
+});
 
 // File analysis route
 app.post('/analyze-file', upload.single('file'), async (req, res) => {

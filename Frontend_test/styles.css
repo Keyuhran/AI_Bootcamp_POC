@@ -82,6 +82,7 @@ html, body, #root {
 
 .file-upload {
   flex-shrink: 0;
+  color:#ffffff;
 }
 
 .chat-input {
@@ -640,7 +641,7 @@ html, body {
 
 
 .upload-container {
-  background-color: #161b22;
+  background-color: #ffffff;
   border-radius: 20px;
   padding: 40px;
   width: 100%;
@@ -656,7 +657,7 @@ html, body {
 
 .upload-subtext {
   font-size: 0.95rem;
-  color: #8b949e;
+  color: #32363a;
   margin-bottom: 25px;
 }
 
@@ -705,13 +706,13 @@ html, body {
 }
 
 .upload-status {
-  background-color: #21262d;
+  background-color: #2e0cea;
   padding: 16px;
   border-radius: 12px;
   margin-top: 20px;
   font-size: 0.9rem;
   display: none;
-  color: #c9d1d9;
+  color: #000000;
 }
 
 .upload-actions {
@@ -737,6 +738,7 @@ html, body {
 
 .btn-cancel:hover {
   background-color: #484f58;
+  color: white;
 }
 
 .btn-submit {
@@ -784,4 +786,60 @@ html, body {
 
 .quick-action-button:hover {
   background-color: #4f55b5;
+}
+
+
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.modal-content {
+  background-color: #161b22;
+  padding: 30px 40px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.modal-content input {
+  padding: 12px;
+  margin-top: 10px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+.modal-content button {
+  margin-top: 15px;
+  padding: 12px 24px;
+  background-color: #238636;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.modal-content button:hover {
+  background-color: #2ea043;
+}
+.upload-container,
+.upload-header,
+.upload-subtext,
+.upload-drop p,
+.file-name-display,
+.upload-status,
+.choose-file-label {
+  color: #000000;
+}
+.btn,
+.btn-cancel,
+.btn-submit {
+  color: white;
 }
