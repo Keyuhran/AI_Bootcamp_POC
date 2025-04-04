@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Database</title>
+  <title>Upload the Report</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="logo-container">
-        <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo" />
+        <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
         <div class="navbar">
           <a href="index.html">Home</a>
           <a href="data.html">Statistics</a>
@@ -28,16 +28,17 @@
         </div>
       </div>
   <div class="upload-container">
-    <div class="upload-header">Database upload</div>
-    <div class="upload-subtext">Make sure the file format meets the requirements. It must be <code>.msg</div>
+    <div class="upload-header">Upload the report</div>
+    <div class="upload-subtext">Make sure the file format meets the requirements. It must be <code>.msg</code></div>
 
-    <label for="fileInput" class="upload-drop">
+    <div class="upload-drop">
       <img src="media/file-doc-icon.png" alt="DOC Icon" onerror="this.style.display='none'" />
       <p><strong>Drag & Drop</strong></p>
-      <p>or <label for="fileInput" style="text-decoration: underline; cursor: pointer; color: #58a6ff;">choose a file</label></p>
-      <input type="file" id="fileInput" />
+      <p>or <label for="fileInput" class="choose-file-label">choose files</label></p>
+      <input type="file" id="fileInput" accept=".msg" multiple />
       <p style="font-size: 0.8rem; color: #8b949e; margin-top: 10px;">Upload emails to the database here</p>
-    </label>
+      <div id="file-name" class="file-name-display"></div>
+    </div>
 
     <div id="upload-status" class="upload-status"></div>
 
@@ -46,36 +47,51 @@
       <button class="btn btn-submit" onclick="submitForm()">Submit</button>
     </div>
 
-
+  </div>
 
   <script>
     const fileInput = document.getElementById("fileInput");
     const statusBox = document.getElementById("upload-status");
+    const fileNameBox = document.getElementById("file-name");
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        const fileList = Array.from(fileInput.files).map(f => `• ${f.name}`).join("\n");
+        fileNameBox.textContent = `Selected files:\n${fileList}`;
+      } else {
+        fileNameBox.textContent = "";
+      }
+    });
 
     function resetForm() {
       fileInput.value = "";
+      fileNameBox.textContent = "";
       statusBox.style.display = "none";
       statusBox.textContent = "";
     }
 
     async function submitForm() {
       if (!fileInput.files.length) {
-        statusBox.textContent = "Please choose a file first.";
+        statusBox.textContent = "Please choose files first.";
         statusBox.style.display = "block";
         return;
       }
 
       const formData = new FormData();
-      formData.append("file", fileInput.files[0]);
+      for (const file of fileInput.files) {
+        formData.append("files", file);
+      }
 
       try {
-        const response = await fetch("http://localhost:3000/analyze-file", {
+        const response = await fetch("http://localhost:3000/upload-msg", {
           method: "POST",
           body: formData
         });
 
+        if (!response.ok) throw new Error("Upload failed.");
         const result = await response.json();
-        statusBox.textContent = result.summary || "File uploaded and analyzed successfully.";
+
+        statusBox.textContent = result.message || "Files uploaded to database successfully.";
         statusBox.style.display = "block";
       } catch (err) {
         console.error("Upload error:", err);

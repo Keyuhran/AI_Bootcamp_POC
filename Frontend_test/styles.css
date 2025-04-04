@@ -661,7 +661,7 @@ html, body {
 }
 
 .upload-drop {
-  border: 2px dashed #bbc6d2;
+  border: 2px dashed #30363d;
   padding: 30px;
   border-radius: 12px;
   text-align: center;
@@ -687,7 +687,21 @@ html, body {
 }
 
 .upload-drop input[type="file"] {
+  margin-top: 10px;
   display: none;
+}
+
+.choose-file-label {
+  text-decoration: underline;
+  color: #58a6ff;
+  cursor: pointer;
+}
+
+.file-name-display {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #c9d1d9;
+  white-space: pre-line;
 }
 
 .upload-status {
