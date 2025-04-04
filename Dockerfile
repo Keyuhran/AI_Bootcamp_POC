@@ -1,38 +1,30 @@
-# Use the official lightweight Python image.
-
-# https://hub.docker.com/_/python
-# This lien pecifies the base image for the Docker container
-# It uses the official Python image from Docker Hub, 
-# specifically the version 3.12 with the "slim" variant
-# which is a smaller, more lightweight version of the full Python image.
 FROM python:3.11-slim
 
-# This ensures that Python output is not buffered, 
-# which is useful for real-time logging and debugging.
-ENV PYTHONUNBUFFERED True
-# This line is needed for the app to work in CStack 
+ENV PYTHONUNBUFFERED=true
+
+RUN apt-get update && apt-get install -y \
+    nodejs npm \
+    supervisor \
+ && rm -rf /var/lib/apt/lists/*
+
+# Create app user
 RUN groupadd --gid 1001 app && useradd --uid 1001 --gid 1001 -ms /bin/bash app
 
-
-#  Sets the working directory for the container to `/home/app`. All subsequent commands will be run from this directory.
 WORKDIR /home/app
-# Copies the `requirements.txt` file from the local machine to the current working directory in the container (`/home/app`).
+
 COPY requirements.txt ./
-
 RUN pip install -r requirements.txt
-# This line is needed for the app to work in CStack 
-USER 1001
 
-# Copy local code to the container image.
-#  Copies all files from the local directory to the current working directory in the container (`/home/app`), and changes the ownership of the copied files
+# Install Node.js dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy code
 COPY --chown=app:app . ./
 COPY .streamlit /app/.streamlit
+COPY supervisord.conf /etc/supervisord.conf
+USER 1001
 
-# (Optional) Add any additional commands here
+EXPOSE 3000 8000
 
-# Run the web service on container startup.
-# Informs Docker that the container will listen on port 8501 at runtime. 
-# This is used for documentation purposes and does not actually publish the port.
-EXPOSE 8501
-# Specifies the command to run when the container starts. In this case, it runs a Streamlit application using the `main.py` script.
-CMD streamlit run Chatbot.py
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
