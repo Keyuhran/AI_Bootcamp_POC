@@ -35,3 +35,7 @@ data/vectordb_email_semantic_80
 
 # log files
 log.log
+
+# JS
+node_modules/
+

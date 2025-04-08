@@ -19,7 +19,13 @@ async def run_process_user_message_wq(public_query):
     return result
 
 def sync_process_user_message_wq(public_query):
-    return asyncio.run(run_process_user_message_wq(public_query))
+    try:
+        loop = asyncio.get_running_loop()
+        # If this line runs, we're in an event loop: create task
+        return asyncio.ensure_future(run_process_user_message_wq(public_query))
+    except RuntimeError:
+        # Not in async context: safe to run normally
+        return asyncio.run(run_process_user_message_wq(public_query))
 
 def initial_response(public_query):
     # The role of this function is to take in the public_query (in the context of this script, it is the body of the email query).
@@ -69,7 +75,7 @@ def initial_response(public_query):
     query_category_result = json.loads(query_category_result)
     return query_category_result
 
-def intermediate_response(public_query,query_category_result):
+async def intermediate_response(public_query,query_category_result):
     # run through the various scenarios and obtain the responses for the various scenarios.
     # pre-allocate repose items
     water_quality_response = []
@@ -79,7 +85,8 @@ def intermediate_response(public_query,query_category_result):
     if query_category_result['water quality']:
         # pass into water_quality_handler.py
         print('True for water_quality testing category')
-        water_quality_response = sync_process_user_message_wq(public_query)       
+        water_quality_response = await run_process_user_message_wq(public_query)
+     
 
     if query_category_result['water testing request']:
         print('True for water testing request')
@@ -131,8 +138,9 @@ def water_testing_query_handler(public_query):
 def response_consolidation(query_category,water_quality_response, water_testing_response, product_claim_response,public_query,email_elements):
     print('Individual queries completed. Now consolidating...')
     # Check for presence of vectordb
-    vectordb = vectordb_acquire("email_semantic_98")
-    email_reference = vectordb.similarity_search_with_relevance_scores(public_query, k=4)
+    email_vectordb = vectordb_acquire("email_semantic_98")
+    wq_reference_vectordb = vectordb_acquire("wq_reference")
+    email_reference = email_vectordb.similarity_search_with_relevance_scores(public_query, k=4)
 
     delimiter = "###"
     system_message = f"""
@@ -209,7 +217,7 @@ def rejection_response_irrelevance(public_query,email_elements):
     rejection_response = llm.get_completion_by_messages(messages)
     return rejection_response
 
-def full_workflow(public_query, email_elements):
+async def full_workflow(public_query, email_elements):
     
     query_category = initial_response(public_query)
 
@@ -218,7 +226,7 @@ def full_workflow(public_query, email_elements):
         final_response = rejection_response_irrelevance(public_query,email_elements)
         return final_response
     else:
-        water_quality_response, water_testing_response, product_claim_response = intermediate_response(public_query,query_category)
+        water_quality_response, water_testing_response, product_claim_response = await intermediate_response(public_query,query_category)
 
     final_response = response_consolidation(query_category,water_quality_response, water_testing_response, product_claim_response,public_query,email_elements)
     return final_response
