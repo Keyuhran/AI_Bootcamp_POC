@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chatbot Conversation</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <div class="logo-container">
+    <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+    <div class="navbar">
+      <a href="index.html">Home</a>
+      <a href="data.html">Statistics</a>
+      <a href="file_upload.html">File Upload</a>
+      <a href="about.html">About Us</a>
+    </div>
+  </div>
+
+
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useRef, useEffect } = React;
+
+    function App() {
+      const [messages, setMessages] = useState([]);
+      const [input, setInput] = useState("");
+      const [selectedFile, setSelectedFile] = useState(null);
+      const [isBotTyping, setIsBotTyping] = useState(false);
+      const messagesEndRef = useRef(null);
+
+      useEffect(() => {
+        fetch("http://localhost:3000/create-interaction", {
+          method: "POST",
+        }).then(res => {
+          if (!res.ok) console.error("❌ Failed to create interaction");
+        });
+
+        const storedMsg = localStorage.getItem("initialMessage");
+        if (storedMsg) {
+          const userMessage = {
+            text: storedMsg,
+            sender: "Kieran",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+
+          setMessages(prev => [...prev, userMessage]);
+          localStorage.removeItem("initialMessage");
+
+          let response;
+          const fetchResponse = async () => {
+            setIsBotTyping(true);
+            try {
+              if (storedMsg.startsWith("Analyse this file:")) {
+                const cleanText = storedMsg.replace("Analyse this file:", "").trim();
+                response = await fetch("http://localhost:3000/analyze-text", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ text: cleanText })
+                });
+              } else {
+                response = await fetch("http://localhost:3000/chat", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ content: storedMsg })
+                });
+              }
+
+              const data = await response.json();
+              const botMessage = {
+                text: data.summary || data.response,
+                sender: "Bot",
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                showDetails: data.showDetails,
+                score: data.emailScore || data.score,
+                originalInput: storedMsg
+              };
+
+              setMessages(prev => [...prev, botMessage]);
+              setIsBotTyping(false);
+            } catch (err) {
+              console.error("❌ Error sending initial message to backend:", err);
+              setIsBotTyping(false);
+            }
+          };
+
+          fetchResponse();
+        }
+      }, []);
+
+      const handleSubmit = async (e) => {
+        setIsBotTyping(true);
+        e.preventDefault();
+        if (!input.trim() && !selectedFile) return;
+
+        const userMessage = {
+          text: input || (selectedFile && `Uploaded file: ${selectedFile.name}`),
+          sender: "Kieran",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        setInput("");
+
+        let response;
+        let originalInput = input;
+
+        try {
+          if (selectedFile) {
+            const formData = new FormData();
+            formData.append("file", selectedFile);
+
+            response = await fetch('http://localhost:3000/analyze-file', {
+              method: 'POST',
+              body: formData
+            });
+          } else if (input.startsWith("Analyse this file:")) {
+            const cleanText = input.replace("Analyse this file:", "").trim();
+            originalInput = cleanText;
+            response = await fetch("http://localhost:3000/analyze-text", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: cleanText })
+            });
+          } else {
+            response = await fetch("http://localhost:8000/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ content: input })
+            });
+          }
+
+          const data = await response.json();
+          const botMessage = {
+            text: data.summary || data.response,
+            sender: "Bot",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            showDetails: data.showDetails,
+            score: data.emailScore || data.score,
+            originalInput: originalInput
+          };
+          setMessages(prev => [...prev, botMessage]);
+        } catch (err) {
+          console.error("❌ Error getting response:", err);
+        }
+
+        setSelectedFile(null);
+        setIsBotTyping(false);
+      };
+
+      const handleAnalysisClick = () => {
+        setInput("Analyse this file: ");
+      };
+
+      useEffect(() => {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }, [messages]);
+
+      return (
+        <div className="app-container">
+          <aside className="sidebar">
+            <div className="icon-wrapper">
+              <img src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><circle cx='16' cy='16' r='16'/></svg>" alt="Analytics" />
+              <span>Analytics</span>
+            </div>
+            <div className="icon-wrapper">
+              <img src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><rect x='4' y='4' width='24' height='24'/></svg>" alt="Advanced Reasoning" />
+              <span>Advanced Reasoning</span>
+            </div>
+          </aside>
+
+          <main className="chat-content">
+            <div className="messages-container">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`message-bubble ${msg.sender === "Kieran" ? "user-message" : "bot-message"}`}>
+                  <p>{msg.text}</p>
+                  {msg.showDetails && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await fetch("http://localhost:3000/create-enquiry", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              description: (msg.originalInput || "No input provided").replace(/^Analyse this file:\s*/i, ""),
+                              sentiment: msg.score || 0.0,
+                            }),
+                          });
+
+                          window.location.href = "/details?score=" + msg.score;
+                        } catch (err) {
+                          console.error("❌ Failed to register enquiry:", err);
+                        }
+                      }}
+                      className="details-button"
+                    >
+                      View Details
+                    </button>
+                  )}
+                  <small>{msg.sender} · {msg.time}</small>
+                </div>
+              ))}
+
+              {isBotTyping && (
+                <div className="message-bubble bot-message typing-indicator">
+                  <p><span className="dot"></span><span className="dot"></span><span className="dot"></span></p>
+                  <small>Bot · typing...</small>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+
+            <form className="input-form" onSubmit={handleSubmit}>
+              <input
+                type="file"
+                className="file-upload"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+              <input
+                type="text"
+                placeholder="Type here..."
+                className="chat-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              <button 
+                type="button" 
+                className="analysis-trigger-button"
+                onClick={handleAnalysisClick}
+              >
+                <img 
+                  src="media/Analyse.png" 
+                  alt="Analyze Icon" 
+                  style={{ height: '16px', width: '16px', marginRight: '4px' }}
+                />
+              </button>
+            </form>
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

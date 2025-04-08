@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload Email Files</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+  </style>
+</head>
+<body>
+  <div class="modal" id="auth-modal">
+    <div class="modal-content">
+      <h2>Enter Password to Access</h2>
+      <form id="auth-form" onsubmit="event.preventDefault(); validatePassword();">
+        <input type="password" id="password-input" placeholder="Enter password..." />
+        <button type="submit">Submit</button>
+      </form>
+      <p id="error-msg" style="color:red; display:none; margin-top:10px;">Incorrect password</p>
+    </div>
+  </div>
+
+  <div class="logo-container">
+    <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+    <div class="navbar">
+      <a href="index.html">Home</a>
+      <a href="data.html">Statistics</a>
+      <a href="file_upload.html">File Upload</a>
+      <a href="about.html">About Us</a>
+    </div>
+  </div>
+
+  <div class="upload-container" style="display:none" id="upload-section">
+    <div class="upload-header">Upload Email Files</div>
+    <div class="upload-subtext">Make sure the file format meets the requirements. It must be <code>.msg</code></div>
+
+    <div class="upload-drop" id="drop-area">
+      <img src="media/file-doc-icon.png" alt="DOC Icon" onerror="this.style.display='none'" />
+      <p><strong>Drag & Drop</strong></p>
+      <p>or <label for="fileInput" class="choose-file-label">choose files</label></p>
+      <input type="file" id="fileInput" accept=".msg" multiple />
+      <p style="font-size: 0.8rem; margin-top: 10px;">Upload emails to the database here</p>
+      <div id="file-name" class="file-name-display"></div>
+    </div>
+
+    <div id="upload-status" class="upload-status"></div>
+
+    <div class="upload-actions">
+      <button class="btn btn-cancel" onclick="resetForm()">Cancel</button>
+      <button class="btn btn-submit" onclick="submitForm()">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    async function validatePassword() {
+      const input = document.getElementById("password-input").value;
+
+      try {
+        const res = await fetch("/verify-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: input })
+        });
+
+        if (res.ok) {
+          localStorage.setItem("uploadAuthTimestamp", Date.now());
+          document.getElementById("auth-modal").style.display = "none";
+          document.getElementById("upload-section").style.display = "block";
+        } else {
+          document.getElementById("error-msg").style.display = "block";
+        }
+      } catch (err) {
+        console.error("Password verification error:", err);
+      }
+    }
+
+    window.onload = () => {
+      const authTime = localStorage.getItem("uploadAuthTimestamp");
+      if (authTime && (Date.now() - parseInt(authTime) < 10 * 60 * 1000)) {
+        document.getElementById("auth-modal").style.display = "none";
+        document.getElementById("upload-section").style.display = "block";
+      }
+    };
+
+    const fileInput = document.getElementById("fileInput");
+    const statusBox = document.getElementById("upload-status");
+    const fileNameBox = document.getElementById("file-name");
+    const dropArea = document.getElementById("drop-area");
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        const fileList = Array.from(fileInput.files).map(f => `• ${f.name}`).join("\n");
+        fileNameBox.textContent = `Selected files:\n${fileList}`;
+      } else {
+        fileNameBox.textContent = "";
+      }
+    });
+
+    dropArea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropArea.classList.add("dragover");
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove("dragover");
+    });
+
+    dropArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropArea.classList.remove("dragover");
+      const files = e.dataTransfer.files;
+      fileInput.files = files;
+      const fileList = Array.from(files).map(f => `• ${f.name}`).join("\n");
+      fileNameBox.textContent = `Selected files:\n${fileList}`;
+    });
+
+    function resetForm() {
+      fileInput.value = "";
+      fileNameBox.textContent = "";
+      statusBox.style.display = "none";
+      statusBox.textContent = "";
+    }
+
+    async function submitForm() {
+      if (!fileInput.files.length) {
+        statusBox.textContent = "Please choose files first.";
+        statusBox.style.display = "block";
+        return;
+      }
+
+      const formData = new FormData();
+      for (const file of fileInput.files) {
+        formData.append("files", file);
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/upload-msg", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("Upload failed.");
+        const result = await response.json();
+
+        statusBox.textContent = result.message || "Files uploaded to database successfully.";
+        statusBox.style.display = "block";
+      } catch (err) {
+        console.error("Upload error:", err);
+        statusBox.textContent = "❌ Upload failed. Please try again.";
+        statusBox.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>

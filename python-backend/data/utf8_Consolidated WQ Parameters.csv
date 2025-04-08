@@ -1,0 +1,458 @@
+Parameter List,Units,PUB Drinking Water Standard Average,PUB Drinking Water Standard Range,US EPA Standards (updated May 2009),WHO Drinking-water Guidelines 2022 (4th Edition with 1st and 2nd addenda),Environmental Public Health (Water Suitable for Drinking) (No.2) Regulations 2019,"EU Directive (2020/2184) 
+16 Dec 2020"
+2-MIB,ng/L,,,,,,
+Colour,Hazen,<5,<5,15 Colour Units (Sec MCL),,15,acceptable to customer
+Conductivity,uS/cm,225,81-587,,,1000 (at 25?C) (COP),2500
+Conductivity-in-situ,uS/cm,,,,,,
+Geosmin,ng/L,,,,,,
+Langelier Saturation Index (LSI),Units,,,,,,
+Oil and Grease,mg/L,,,,,,
+pH,Units,8,7.5 - 8.7,6.5-8.5 (Sec MCL),,6.5-9.5,6.5-9.5
+pH-in-situ,Units,,,,,,
+TDS/Conductivity Ratio,-,,,,,,
+Threshold Odour Test,TON,Unobjectionable,Unobjectionable,3 (Sec MCL),,3 (COP),acceptable to customer
+Total Dissolved Solids (TDS),mg/L,109,64 - 480,500 (Sec MCL),Not of health concern at levels found in drinking-water,600 (COP),
+Total Solids,mg/L,,,,,,
+Total Suspended Solids,mg/L,,,,,,
+Turbidity,NTU,0.15,0.06 - 0.45,max 5,,"max 5 (COP)
+max 5 (consumers' tap) 
+max 1 (WW's outlet)
+max 0.3 (after filters)",acceptable to customer and no abnormal change
+Turbidity-in-situ,NTU,,,,,,
+UV 254 Absorbance,cm-1,,,,,,
+Bromate,mg/L,0.002,< 0.002 - 0.005,0.01,0.01,0.01,0.01
+Chlorate,mg/L,0.14,< 0.043- 0.424,,0.7,0.7,0.25
+Chlorine (Free),mg/L,,,,,,
+Chlorine (Free)-in-situ,mg/L,,,,,,
+Chlorite,mg/L,< 0.015,< 0.015,1,0.7,0.7,0.25
+Cyanogen chloride,ug/L,< 50,< 50,,600 (Health-based),70,
+Iodide,mg/L,,,,,,
+Monochloramine,mg/L,2.08,1.29 - 2.77,4,3,3,
+Monochloramine-in-situ,mg/L,,,,,,
+Total Residual Chlorine,mg/L,2.28,1.28 - 2.88,4,5,5,
+Total Residual Chlorine-in-situ,mg/L,,,,,,
+Aluminium,mg/L,0.002,< 0.019 - 0.083,0.05-0.2 (Sec MCL),0.9 (Health-based),"(COP)
+0.1 (all WWs except PTWW), 
+0.2 (PTWW)",0.2
+Ammonia (as N),mg/L,,,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Antimony,ug/L,< 0.003,<1,6,20,20,10
+Arsenic,ug/L,0.12,< 0.50 - 0.61,10,10,10,10
+Asbestos,MF/L,,,7,"No consistent evidence that ingested asbestos is hazardous to
+health and available data inadequate to permit derivation of
+health-based guideline value",,
+Barium,mg/L,0.016,< 0.004 - 0.038,2,1.3,1.3,
+Beryllium,ug/L,,,4,12 (Health-based),,
+Bicarbonate (as HCO3),mg/L,,,,,,
+Boron,mg/L,0.297,0.007 - 0.538,,2.4,2.4,1.5
+Bromide,mg/L,,,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Cadmium,ug/L,< 0.2,< 0.2,5,3,3,5
+Calcium,mg/L,16.7,8.8 - 77.7,,,,
+Chloride,mg/L,28,< 5 - 154,250 (Sec MCL),Not of health concern at levels found in drinking-water,250 (COP),250
+Chromium ,mg/L,< 0.005,< 0.005,0.1,0.05,0.05,0.025
+Cobalt,mg/L,,,,,,
+Copper,mg/L,0.002,< 0.002 - 0.003,"1.3 (action level, see Note 2)
+1.0 (Sec MCL)",2,2,2
+Cyanide,mg/L,< 0.002,< 0.002,0.2,0.07 (Health-based),0.07,0.05
+Dissolved phosphorous (as P),mg/L,,,,,,
+Fluoride,mg/L,0.45,0.20 - 0.56,"4
+2 (Sec MCL)",1.5,0.7,1.5
+Hexavalent Chromium (as Cr),ug/L,,,,,,
+Iron,mg/L,0.004,< 0.003 - 0.034,0.3 (Sec MCL),"Not of health concern at levels causing acceptability problems in
+drinking-water",0.3 (COP),0.2
+Lead,ug/L,0.5,< 0.5 - 1.2,"15 (action level, see Note 2)",10,10,5
+Magnesium,mg/L,0.275,< 0.027 - 2.500,,,,
+Manganese,mg/L,0.002,< 0.002 - 0.019,0.05 (Sec MCL),0.08,,0.05
+Mercury,ug/L,< 0.03,< 0.03,2,6,6,1
+Molybdenum,mg/L,< 0.004,< 0.004,,0.07 (Health-based),0.07,
+Nickel,mg/L,< 0.003,< 0.003,,0.07,0.07,0.02
+Nitrate (as N),mg/L,0.12,< 0.01 - 0.88,10,11,11,11
+Nitrite (as N),mg/L,0.01,< 0.01 - 0.03,1,0.9,0.9,0.15
+Perchlorate,ug/L,< 2,< 2,,70,70,
+Potassium,mg/L,,,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Selenium,ug/L,< 0.5,< 0.5,50,40,40,20
+Silica (as SiO2),mg/L,1.18,0.17 - 6.92,,,,
+Silver,ug/L,,,100 (Sec MCL),"Available data inadequate to permit derivation of healthbased
+guideline value and usually occurs in drinking water at
+concentrations well below those of health concern",100 (COP),
+Sodium,mg/L,10.5,1.8 - 36.5,,Not of health concern at levels found in drinking-water,,200
+Strontium,mg/L,,,,,,
+Sulphate,mg/L,7.6,1.4 - 76.9,250 (Sec MCL),Not of health concern at levels found in drinking-water,500 (COP),250
+Sulphide,mg/L,,,,,,
+Thallium,ug/L,,,2,,,
+Tin,ug/L,,,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Total Alkalinity (as CaCO3),mg/L,34,7 to 66,,,,
+Total Hardness (as CaCO3),mg/L,43,25 - 203,,Not of health concern at levels found in drinking-water,,
+Total Nitrogen (as N),mg/L,,,,,,
+Total Phosphorous (as P),mg/L,0.021,< 0.003 - 0.064,,,,
+Vanadium,ug/L,,,,,,
+Zinc,mg/L,,,5 (Sec MCL),Not of health concern at levels found in drinking-waterb,5 (COP),
+"1,2,4-Trimethylbenzene    ",ug/L,,,,,,
+"1,3,5-Trimethylbenzene   ",ug/L,,,,,,
+Benzene,ug/L,< 1,< 1,5,10,10,1
+Ethylbenzene,ug/L,< 1,< 1,700,300,300,
+Isopropylbenzene  ,ug/L,,,,,,
+n-Butylbenzene   ,ug/L,,,,,,
+n-Propylbenzene   ,ug/L,,,,,,
+Sec-Butylbenzene   ,ug/L,,,,,,
+Styrene,ug/L,< 2,< 2,100,20,20,
+Tert-Butylbenzene  ,ug/L,,,,,,
+Toluene,ug/L,< 5,< 5,1000,700,700,
+Xylenes (Total),ug/L,< 15,< 15,10000,500,500,
+"1,1,1-Trichloroethane",ug/L,,,200,200 (Health-based),,
+"1,1,2-Trichloroethane",ug/L,,,5,,,
+"1,1-Dichloroethane",ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+"1,2,3-Trichloropropane  ",ug/L,,,,,,
+"1,2-Dichloroethane",ug/L,< 2,< 2,5,30,30,3
+Carbon Tetrachloride,ug/L,< 0.4,< 0.4,5,4,4,
+Dichloromethane (Methylene Chloride),ug/L,< 3,< 3,5,20,20,
+"1,1-Dichloroethene (1,1-Dichloroethylene)",ug/L,,,7,140 (Health-based),,
+"1,2-Dichloroethene (cis & trans)",ug/L,< 5,< 5,"70cis, 100trans",50,50,
+Tetrachloroethene (Tetrachlorethylene),ug/L,< 1,< 1,5,100,40,10 (total with trichloroethene)
+Trichloroethene (Trichlorethylene),ug/L,< 1,< 1,5,8,20,10 (total with tetrachloroethene)
+Vinyl Chloride,ug/L,< 0.1,< 0.1,2,0.3,0.3,0.5
+"1,2,4-Trichlorobenzene",ug/L,,,70,,,
+"1,2-Dichlorobenzene (o-Dichlorobenzene)",ug/L,< 1,< 1,600,1000,1000,
+"1,3-Dichlorobenzene",ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+"1,4-Dichlorobenzene (p-Dichlorobenzene)",ug/L,< 1,< 1,75,300,300,
+Chlorobenzene (Monochlorobenzene),ug/L,,,100,300 (Health-based),,
+Trichlorobenzenes (total),ug/L,,,,20 (Health-based),,
+"2,4,6-Trinitrotoluene (TNT)",ug/L,,,,,,
+"2-Amino-4,6-dinitrotoluene (2A-DNT) ",ug/L,,,,,,
+Cyclotetramethylenetetranitramine (HMX),ug/L,,,,,,
+Cyclotrimethylenetrinitramine (RDX)  ,ug/L,,,,,,
+Dialkyltins,ng/L,,,,,,
+Tributyltin oxide,ug/L,,,,,,
+"1,2-Diphenylhydrazine  ",ug/L,,,,,,
+"1,4 Dioxane",ug/L,< 1,< 1,,50,50,
+"2,4-Dinitrophenol  ",ug/L,,,,,,
+"2,4-Dinitrotoluene  ",ug/L,,,,,,
+"2,6-Dinitrotoluene ",ug/L,,,,,,
+2-Chlorotoluene   ,ug/L,,,,,,
+2-Methylphenol   ,ug/L,,,,,,
+2-Phenylphenol,ug/L,,,,1000 (Health-based),,
+4-Chlorotoluene  ,ug/L,,,,,,
+Acrylamide,ug/L,< 0.2,< 0.2,0.05% dosed at 1 mg/L or equivalent,0.5,0.5,0.1
+Bisphenol A  ,ug/L,,,,,,2.5
+Carbon Disulfide    ,ug/L,,,,,,
+Cyanuric Acid,ug/L,,,,40 (50 as NaDCC),40 (50 as NaDCC),
+Dichlorodifluoromethane   ,ug/L,,,,,,
+Epichlorohydrin,ug/L,< 0.1,< 0.1,0.01% dosed at 20 mg/L or equivalent,0.4,0.4,0.1
+Ethylene glycol    ,ug/L,,,,,,
+Hexachlorobutadiene,ug/L,< 0.01,< 0.01,,0.6,0.6,
+Hexane ,ug/L,,,,,,
+Methyl isobutyl ketone (MIBK)     ,ug/L,,,,,,
+Methyl Tertiary Butyl Ether (MTBE),ug/L,,,,"Any guideline that would be derived would be significantly higher
+than concentrations at which MTBE would be detected by odour",,
+Nitrilotriacetic acid (NTA),ug/L,< 1,< 1,,200,200,
+Nitrobenzene   ,ug/L,,,,8 (Health-based),,
+Nonylphenol  ,ug/L,,,,,,
+Phenol  ,ug/L,,,,,,
+Polychlorinated biphenyls (PCBs),ug/L,,,0.5,,,
+Tertiary butyl alcohol     ,ug/L,,,,,,
+Benzo[a]pyrene,ug/L,< 0.07,< 0.07,0.2,0.7,0.7,0.01
+Naphthalene,ug/L,,,,,,
+Dibromoacetic acid,ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Dichloroacetate (DCAA),ug/L,10,< 5 - 39.6,,50,50,
+Haloacetic acids (HAAs),ug/L,,,60,,,60
+Monobromoacetic acid,ug/L,,,,,,
+Monochloroacetic acid (MCAA),ug/L,< 10,< 10,,20,20,
+Trichloroacetate,ug/L,7,< 5 - 20.8,,200,200,
+"2,4,6-Trichlorophenol",ug/L,< 1,< 1,,200,200,
+"2,4-Dichlorophenol",ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+2-Chlorophenol,ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Bromochloroacetonitrile,ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Dibromoacetonitrile,ug/L,< 7,< 7,,70,70,
+Dichloroacetonitrile,ug/L,1.72,< 1 - 6.41,,20,20,
+Trichloroacetonitrile,ug/L,,,,Available data inadequate to permit derivation of health-based guideline value,,
+"1,1-Dichloroacetone",ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline values for any of the chloroacetones",,
+Chloral Hydrate (Trichloroacetaldehyde),ug/L,,,,100 (Health-based),,
+Chlorinated furanones (MX),ng/L,,,,1800 (Health-based),,
+Chloropicrin,ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Formaldehyde,ug/L,,,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+N-Nitrosodiethylamine (NDEA)     ,ug/L,,,,,,
+N-Nitrosodimethylamine (NDMA),ng/L,2,< 2 - 3.5,,100,100,
+Total Halogenated Organics (TOX),mg/L,,,,,,
+Bromodichloromethane,ug/L,7,< 5 - 17.3,,60,60,
+Bromoform (CHBr3),ug/L,5.2,< 5 - 15.3,,100,100,
+Chloroform (CHC13),ug/L,13.1,< 5 - 52.9,,300,300,
+Dibromochloromethane,ug/L,5.3,< 5 - 12.7,,100,100,
+Total Trihalomethanes (TTHM),ug/L,,,80,,,100
+Total Trihalomethanes (TTHM) Ratio,Units,0.215,< 0.2 - 0.481,,R<1 ,R<1,
+Biochemical Oxygen Demand-5days (BOD5),mg/L,,,,,,
+Biodegradable Organic Carbon (BDOC),mg/L,,,,,,
+Chemical Oxygen Demand (COD),mg/L,,,,,,
+Dissolved Organic Carbon (DOC),mg/L,,,,,,
+Organic Nitrogen,mg/L,,,,,,
+Total Organic Carbon (TOC),mg/L,0.92,< 0.1 - 1.91,,,,No abnormal change
+"1,2-Dibromo-3-Chloropropane (DBCP)",ug/L,< 0.1,< 0.1,0.2,1,1,
+"1,2-Dibromoethane (Ethylene Dibromide)",ug/L,< 0.05,< 0.05,0.05,0.4,0.4,
+"1,2-Dichloropropane",ug/L,< 1,< 1,5,40,40,
+"1,3-Dichloropropane ",ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+"1,3-Dichloropropene (cis & trans)",ug/L,< 0.02,< 0.02,,20,20,
+"2,4,5-Trichlorophenoxyacetic Acid (2,4,5-T)",ug/L,< 0.05,< 0.05,,9,9,
+"2,4-Dichlorophenoxyacetic acid (2,4-D)",ug/L,< 0.05,< 0.05,70,30,30,
+2-Methyl-4-chlorophenoxyacetic Acid (MCPA),ug/L,< 0.05,< 0.05,,700 (Health-based),700,
+"4-(2,4-Dichlorophenoxy)butyric Acid (2,4-DB)",ug/L,< 0.05,< 0.05,,90,90,
+4-(4-Chloro-2-methylphenoxy)butanoic Acid (MCPB),ug/L,,,,Unlikely to occur in drinking-water,,
+"4,4'-Dichlorodiphenyldichloroethene (4,4'-DDE)",ug/L,,,,,,
+Acetochlor ,ug/L,,,,,,
+Alachlor,ug/L,< 1,< 1,2,20,20,
+Aldicarb,ug/L,,,,10,,
+Aldicarb Sulfone,ug/L,,,,10,,
+Aldicarb Sulfoxide,ug/L,,,,10,,
+Aldicarb Sulfoxide and Aldicarb Sulfone,ug/L,< 0.05,< 0.05,,10,10,
+Aldrin ,ug/L,,,,,,0.03
+Aldrin and dieldrin,ug/L,< 0.01,< 0.01,,0.03,0.03,
+Aminomethylphosphonic acid (AMPA),ug/L,,,,,,
+Glyphosate and Aminomethylphosphonic acid (AMPA),ug/L,< 5,< 5,,900 (Health-based),900,
+Atrazine,ug/L,,,3,,,
+Atrazine and its chloro-s-triazine metabolites,ug/L,< 0.2,< 0.2,,100,100,
+Bentazone,ug/L,< 0.05,< 0.05,,500 (Health-based),500,
+Carbofuran,ug/L,< 0.05,< 0.05,40,7,7,
+Chlordane (total isomers),ug/L,< 0.02,< 0.02,2,0.2,0.2,
+Chlorotoluron,ug/L,< 0.05,< 0.05,,30,30,
+Chlorpyrifos,ug/L,< 0.1,< 0.1,,30,30,
+Cyanazine,ug/L,< 0.2,< 0.2,,0.6,0.6,
+Dalapon,ug/L,,,200,,,
+DCPA mono acid degradate ,ug/L,,,,,,
+DDT and metabolites (total isomers),ug/L,< 0.01,< 0.01,,1,1,
+Deethyl-atrazine (DEA),ug/L,,,,,,
+Deisopropyl-atrazine (DIA),ug/L,,,,,,
+Diaminochlorotriazine (DACT),ug/L,,,,,,
+Diazinon ,ug/L,,,,,,
+Dichlorprop,ug/L,< 0.05,< 0.05,,100,100,
+Dichlorvos,g/L,< 0.02,< 0.02,,20 (Health-based),20,
+Dicofol,g/L,< 0.01,< 0.01,,10 (Health-based),10,
+Dieldrin,ug/L,,,,,,0.03
+Dimethoate,ug/L,< 0.1,< 0.1,,6,6,
+Dinoseb,ug/L,,,7,Unlikely to occur in drinking-water,,
+Diquat,ug/L,< 2.5,< 2.5,20,30 (Health-based),30,
+Disulfoton ,ug/L,,,,,,
+Diuron ,ug/L,,,,,,
+Endosulfan (Total),ug/L,,,,20 (Health-based),,
+Endosulfan-solid (Total),ug/kg,,,,,,
+Endothall,ug/L,,,100,,,
+Endrin,ug/L,< 0.01,< 0.01,2,0.6,0.6,
+"Fenoprop (2,4,5-TP) / Silvex",ug/L,< 0.05,< 0.05,50,9,9,
+Fernvalerate,ug/L,,,,,,
+Fipronil,ug/L,,,,,,
+Fonofos ,ug/L,,,,,,
+Gamma-BHC (Lindane),ug/L,< 0.01,< 0.01,0.2,2,2,
+Glyphosate,ug/L,,,700,,,
+Heptachlor ,ug/L,,,0.4,0.03 (Health-based with heptachlor epoxide),,0.03
+Heptachlor epoxide,ug/L,,,0.2,0.03 (Health-based with heptachlor),,0.03
+Hexachlorobenzene,ug/L,,,1,0.05 (Health-based),,
+Hexachlorocyclopentadiene,ug/L,,,50,,,
+Hydroxyatrazine ,ug/L,< 0.5,< 0.5,,200,200,
+Imidacloprid,ug/L,,,,,,
+Isoproturon,ug/L,< 0.05,< 0.05,,9,9,
+Linuron  ,ug/L,,,,,,
+Malathion,ug/L,< 0.02,< 0.02,,900 (Health-based),900,
+Mecoprop,ug/L,< 0.05,< 0.05,,10,10,
+Methoxychlor,ug/L,< 0.01,< 0.01,40,20,20,
+Metolachlor,ug/L,< 1,< 1,,10,10,
+Mirex ,ug/L,,,,,,
+Molinate,ug/L,< 0.6,< 0.6,,6,6,
+Oxamyl (Vydate),ug/L,,,200,,,
+Parathion,ug/L,,,,10 (Health-based),,
+Pendimethalin,ug/L,< 1,< 1,,20,20,
+Pentachlorophenol,ug/L,< 0.5,< 0.5,1,9,9,
+Permethrin,ug/L,< 2,< 2,,300 (Health-based),300,
+Pesticide residues,ug/L,,,,,,
+Picloram,ug/L,,,500,,,
+Prometon  ,ug/L,,,,,,
+Propanil,ug/L,,,,"Readily transformed into metabolites that are more toxic;
+a guideline value for the parent compound is considered
+inappropriate, and there are inadequate data to enable the
+derivation of guideline values for the metabolites",,
+Pyridate,ug/L,,,,Not persistent and only rarely found in drinking-water,,
+Pyriproxyfen,ug/L,< 0.05,< 0.05,,"Not considered appropriate to set guideline values for pesticides
+used for vector control in drinking-water",300,
+Sec-Ethyl-dipropylthiocarbamate (EPTC),ug/L,,,,,,
+Simazine,ug/L,< 0.2,< 0.2,4,2,2,
+Terbacil   ,ug/L,,,,,,
+Terbufos  ,ug/L,,,,,,
+Terbuthylazine (TBA),ug/L,< 0.7,< 0.7,,7,7,
+Thiamethoxam,ug/L,,,,,,
+Toxaphene,ug/L,,,3,,,
+Trifluralin,ug/L,< 1,< 1,,20,20,
+Clostridium perfringens,cfu/L,,,,,,<1 / 100 mL
+Enterococci,cfu/100 mL,,,,,,<1 / 100 mL (Intestinal)
+Escherichia coli (E. coli),cfu/100 mL,<1,<1,trigger repeat samples if positive,<1 / 100 mL,<1 / 100 mL,<1 / 100 mL
+Heterotrophic Plate Count (HPC),"cfu/mL
+cfu/100mL (NW)",,,<500 / mL,,<500 cfu/mL (COP),No abnormal change (22?C)
+Heterotrophic Plate Count (HPC) - 7 days,cfu/mL,,,,,,
+Total coliform,cfu/100 mL,,,<5.0% samples tested positive per month (See Note 3),,Absent (COP),<1 / 100 mL
+Aeromonas,cfu/L,,,,,,
+Campylobacter,cfu/L,,,,,,
+Legionella,cfu/L,,,No limit but remove and inactivate Giardia lamblia and Viruses,,Absent (COP),<1000 cfu/L
+Salmonella,absent / present,,,,,,
+Shigella,absent / present,,,,,,
+Vibrio cholerae,absent / present,,,,,,
+Cryptosporidium ,"oocyst/20L (RW)
+oocyst/1000L (TW)",,,99% removal/inactivation,,Absent (COP),
+Giardia lamblia  ,"cyst/20L (RW)
+cyst/1000L (TW)",,,99% removal/inactivation,,Absent (COP),
+Naegleria fowleri,absent / present,,,,,,
+Coliphage (male-specific - E.coli ATCC 700891),pfu/L ,,,,,,
+Coliphage (somatic),pfu/L ,,,,,,50 (raw water only)
+Enterovirus ,absent / present,,,absent,,,
+Gross Alpha,Bq/L,0.06,< 0.05 - 0.11,0.555,0.5,0.5,0.1
+Gross Beta,Bq/L,0.081,< 0.05 - 0.181,4 mrem/yr  (See Note 4),1,1,1
+Radium 226,Bq/L,,,0.185 (total with Radium 228),1,,0.5
+Radium 228,Bq/L,,,0.185 (total with Radium 226),0.1,,0.2
+Radon 222,Bq/L,0.6,< 0.60 - 0.79,,,100,100 (Radon)
+Tritium,Bq/L,,,,10000,,
+Uranium,g/L,0.008,< 0.001 - 0.035,30,30,30,30
+Algae Counts (Microscopy),cells/mL,,,,,,
+Chlorophyll-A (Fluoroprobe),g/L,,,,,,
+Chlorophyll-A,g/L,,,,,,
+Total Algae Counts (FCM),counts/mL,,,,,,
+Anatoxin  ,g/L,,,,30,,
+Cylindrospermopsin (Total),g/L,< 0.1,< 0.1,,0.7,,
+Cylindrospermopsin (CYN) (free plus cell bound),g/L,,,,0.7 (Provisional GV),,
+Domoic acid,ng/mL,,,,,,
+Microcystin-LA ,g/L,,,,,,
+Microcystin-LR ,g/L,< 0.1,< 0.1,,1 (total microcystins),1,1
+Microcystin-RR ,g/L,,,,,,
+Microcystin-YR ,g/L,,,,,,
+Microcystin (ELISA),g/L,< 0.6,< 0.6,,1 (total microcystins),1,1
+Okadaic acid,ng/mL,,,,,,
+Saxitoxins (Total),ng/mL,< 0.1,< 0.1,,3,,
+Microanimals,nos./m3,,,,,,
+Acesulfame,ng/L,,,,,,
+Aspartame,ng/L,,,,,,
+Cyclamate,ng/L,,,,,,
+Saccharin,ng/L,,,,,,
+Sucralose,ng/L,,,,,,
+Perfluorooctane Sulfonate (PFOS) ,ng/L,,,,,,
+Perfluorooctanoic Acid (PFOA),ng/L,,,,,,
+Carbamazepine,ng/L,,,,,,
+Diclofenac Sodium,ug/L,,,,"Available data inadequate to permit derivation of healthbased
+guideline value and usually occurs in drinking water at
+concentrations well below those of health concern",,
+Gemfibrozil,ug/L,,,,,,
+Ibuprofen,ug/L,,,,,,
+Ketoprofen,ug/L,,,,,,
+"N,N-Diethyl-meta-toluamide (DEET)",ng/L,,,,,,
+Naproxen,ug/L,,,,,,
+Paracetamol  ,ng/L,,,,,,
+Salicylic Acid  ,ng/L,,,,,,
+Trichlorocarban,ug/L,,,,,,
+Triclosan,ug/L,,,,,,
+Trimethoprim ,ng/L,,,,,,
+Di(2-Ethylhexyl) adipate,ug/L,,,400,80 (Health-based),,
+Di(2-Ethylhexyl) phthalate,ug/L,< 1,< 1,6,8,8,
+Estradiol,ug/L,,,,,,
+Estrone,ug/L,,,,,,
+Ethinyl Estradiol,ug/L,,,,,,
+Total Estrogens,ug/L,,,,,,
+1234678 HpCDD,pg/L,,,,,,
+1234678 HpCDF,pg/L,,,,,,
+123478 HxCDD,pg/L,,,,,,
+123478 HxCDF,pg/L,,,,,,
+1234789 HpCDF,pg/L,,,,,,
+123678 HxCDD,pg/L,,,,,,
+123678 HxCDF,pg/L,,,,,,
+12378 PeCDD,pg/L,,,,,,
+12378 PeCDF,pg/L,,,,,,
+123789 HxCDD,pg/L,,,,,,
+123789 HxCDF,pg/L,,,,,,
+234678 HxCDF,pg/L,,,,,,
+23478 PeCDF,pg/L,,,,,,
+2378 TCDD,pg/L,,,30,,,
+2378 TCDF,pg/L,,,,,,
+OCDD,pg/L,,,,,,
+OCDF,pg/L,,,,,,
+Total HpCDD,pg/L,,,,,,
+Total HpCDF,pg/L,,,,,,
+Total HxCDD,pg/L,,,,,,
+Total HxCDF,pg/L,,,,,,
+Total I-TEQ (Max),pg/L,,,,,,
+Total PeCDD,pg/L,,,,,,
+Total PeCDF,pg/L,,,,,,
+Total TCDD,pg/L,,,,,,
+Total TCDF,pg/L,,,,,,
+"2,6-Naphthalenedicarboxylic Acid (NDC)",ug/L,,,,,,
+Alkylphenol Polyethoxylates (APEO)  ,ug/L,,,,,,
+Anionic Surfactants as MBAS,mg/L,,,,,,
+Caffeine,ug/L,,,,,,
+Ethylenediamine tetraacetic acid (EDTA) ,ug/L,< 1,< 1,,600 (as free acid),600 (as free acid),
+Nonylphenoxyacetic acid (NP1EC),ug/L,,,,,,
+Nonylphenoxyethoxyacetic acid (NP2EC),ug/L,,,,,,
+Nitrate plus nitrite combined,units,0.01,<0.01 - 0.08,,1,1,
+Trichloramine,mg/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Temephos,ug/L,,,,"Not considered appropriate to set guideline values for pesticides
+used for vector control in drinking-water",,
+Spinosad,mg/L,,,,"Not considered appropriate to set guideline values for pesticides
+used for vector control in drinking-water",,
+Pirimiphos-methyl,mg/L,,,,"Not recommended for direct application to drinking-water unless
+no other effective and safe treatments are available",,
+Petroleum products,units,,,,"Taste and odour will in most cases be detectable at
+concentrations below those of health concern, particularly with
+short-term exposure",,
+Methoprene,ug/L,,,,"Not considered appropriate to set guideline values for pesticides
+used for vector control in drinking-water",,
+Iodine,mg/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value. Additionally, occurrence in drinking-water is
+usually low. Although higher levels of exposure may occur when
+iodine is used as a drinking-water disinfectant at the point of
+use, extended periods of exposure to iodine through water
+disinfection are unlikely.",,
+Hydrogen sulfide,mg/L,,,,Not of health concern at levels found in drinking-water,,
+Fluoranthene,ug/L,"Occurs in drinking-water at concentrations well below those of
+health concern",,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Fenitrothion,ug/L,"Occurs in drinking-water at concentrations well below those of
+health concern",,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Diflubenzuron,ug/L,,,,"Not considered appropriate to set guideline values for pesticides
+used for vector control in drinking-water",,
+Dichloramine,mg/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Chlorine dioxide,mg/L,,,,"Reduced primarily to chlorite, chlorate and chloride in drinkingwater,
+and to chlorite and chloride upon ingestion; the provisional
+guideline values for chlorite and chlorate are protective for
+potential toxicity from chlorine dioxide",,
+Carbaryl,ug/L,,,,"Occurs in drinking-water at concentrations well below those of
+health concern",,
+Bacillus thuringiensis israelensis (BTI),ug/L,,,,"Not considered appropriate to set guideline values for pesticides
+used for vector control in drinking-water",,
+Bromochloroacetate,ug/L,,,,"Available data inadequate to permit derivation of health-based
+guideline value",,
+Trichlorfon,ug/L,,,,Unlikely to occur in drinking-water,,
+Quintozene,ug/L,,,,Unlikely to occur in drinking-water,,
+Propoxur,ug/L,,,,Unlikely to occur in drinking-water,,
+Phorate,ug/L,,,,Unlikely to occur in drinking-water,,
+Oxamyl,ug/L,,,,Unlikely to occur in drinking-water,,
+Monocrotophos,ug/L,,,,"Has been withdrawn from use in many countries and is unlikely
+to occur in drinking-water",,
+Mirex,ug/L,,,,Unlikely to occur in drinking-water,,
+Methomyl,ug/L,,,,Unlikely to occur in drinking-water,,
+Methamidophos,ug/L,,,,Unlikely to occur in drinking-water,,
+Hexachlorocyclohexanes,ug/L,Unlikely to occur in drinking-water,,,Unlikely to occur in drinking-water,,
+Formothion,ug/L,,,,Unlikely to occur in drinking-water,,
+Fenamiphos,ug/L,,,,Unlikely to occur in drinking-water,,
+Ethylene thiourea,ug/L,,,,Unlikely to occur in drinking-water,,
+Diazinon,ug/L,,,,Unlikely to occur in drinking-water,,
+Deltamethrin,ug/L,,,,Unlikely to occur in drinking-water,,
+Cypermethrin,ug/L,,,,Unlikely to occur in drinking-water,,
+Chlorothalonil,ug/L,,,,Unlikely to occur in drinking-water,,
+Chlorobenzilate,ug/L,,,,Unlikely to occur in drinking-water,,
+Amitraz,ug/L,,,,"Degrades rapidly in the environment and is not expected to
+occur at measurable concentrations in drinking-water supplies",,

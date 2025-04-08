@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chatbot UI</title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <div class="logo-container">
+    <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+    <div class="navbar">
+      <a href="index.html">Home</a>
+      <a href="data.html">Statistics</a>
+      <a href="file_upload.html">File Upload</a>
+      <a href="about.html">About Us</a>
+    </div>
+  </div>
+
+  <!-- React and ReactDOM from CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function QuickActionButton({ label, onClick }) {
+      return (
+        <button className="quick-action-button" onClick={onClick}>
+          {label}
+        </button>
+      );
+    }
+
+    function App() {
+      const userName = "Kieran";
+      const [userInput, setUserInput] = useState("");
+
+      const handleAnalysisClick = () => {
+        setUserInput("Analyse this file: ");
+      };
+
+      const handleButtonClick = (label) => {
+        setUserInput(label);
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!userInput.trim()) return;
+
+        // Store and route to chatpage
+        localStorage.setItem("initialMessage", userInput);
+        window.location.href = "chatpage.html";
+      };
+
+      return (
+        <div className="app-container">
+          <aside className="sidebar">
+            <div className="icon-wrapper">
+              <img
+                src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><circle cx='16' cy='16' r='16'/></svg>"
+                alt="Analytics"
+              />
+              <span>Analytics</span>
+            </div>
+            <div className="icon-wrapper">
+              <img
+                src="data:image/svg+xml;utf8,<svg fill='white' width='32' height='32'><rect x='4' y='4' width='24' height='24'/></svg>"
+                alt="Advanced Reasoning"
+              />
+              <span>Advanced Reasoning</span>
+            </div>
+          </aside>
+
+          <main className="main-content">
+            <h1 className="greeting">
+              Good evening, {userName}
+              <br />
+              How can I help you today?
+            </h1>
+
+            <div className="interaction-container">
+              <div className="button-row">
+                <QuickActionButton label="What is the maximum allowed concentration for boron?" onClick={() => handleButtonClick("What is the maximum allowed concentration for boron?")} />
+                <QuickActionButton label="What is a safe pH level for drinking water?" onClick={() => handleButtonClick("What is a safe pH level for drinking water?")} />
+                <QuickActionButton label="What is the maximum allowed concentration of Chlorine?" onClick={() => handleButtonClick("What is the maximum allowed concentration of Chlorine?")} />
+              </div>
+
+              <form className="input-form-start" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Type here..."
+                  className="chat-input-start"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                />
+                <button 
+                  type="button" 
+                  className="analysis-trigger-button"
+                  onClick={handleAnalysisClick}
+                >
+                  <img 
+                    src="media/Analyse.png" 
+                    alt="Analyze Icon" 
+                    style={{ height: '16px', width: '16px', marginRight: '4px' }}
+                  />
+                </button>
+              </form>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    const rootElement = document.getElementById("root");
+    ReactDOM.createRoot(rootElement).render(<App />);
+  </script>
+</body>
+</html>

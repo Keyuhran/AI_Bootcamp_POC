@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+            <h2>Analysing: Email</h2>
+            <div class="navbar">
+                <a href="index.html">Home</a>
+                <a href="data.html">Statistics</a>
+                <a href="file_upload.html">File Upload</a>
+                <a href="about.html">About Us</a>
+              </div>
+        </div>
+
+        <div class="email-metadata">
+            <p><strong>Subject:</strong> <span id="email-subject">Loading...</span></p>
+            <p><strong>From:</strong> <span id="email-sender">Loading...</span></p>
+        </div>
+
+        <div class="email-content">
+            <h3><b>Email Body</b></h3>
+            <p id="email-body">Loading email content...</p>
+        </div>
+
+        <div class="summary">
+            <h3><b>Summary</b></h3>
+            <p id="email-summary">Loading summary...</p>
+        </div>
+
+        <div class="sentiment-score">
+            <h3><b>Sentiment Score:</b> <span id="sentiment-score">Loading...</span></h3>
+            <img id="sentiment-icon" src="" alt="Sentiment Icon" style="height: 50px;" />
+        </div>
+        
+    </div>
+
+    <script>
+        fetch('/get-email-content')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('email-subject').textContent = data.emailSubject || 'N/A';
+                document.getElementById('email-sender').textContent = data.emailSender || 'N/A';
+                document.getElementById('email-body').textContent = data.emailBody || 'No email body found.';
+                document.getElementById('email-summary').textContent = data.emailSummary || 'No summary found.';
+                // Display the score
+                if (data.emailScore !== undefined) {
+                    document.getElementById('sentiment-score').textContent = data.emailScore;
+                    
+
+                    const icon = document.getElementById('sentiment-icon');
+                    if (data.emailScore > 0.25) {
+                        icon.src = 'media/Happy.png';
+                        icon.alt = 'Positive Sentiment';
+                    } else if (data.emailScore > 0.15) {
+                        icon.src = 'media/Neutral.png';
+                        icon.alt = 'Neutral Sentiment';
+                    } else {
+                        icon.src = 'media/Angry.png';
+                        icon.alt = 'Negative Sentiment';
+                    }
+                }
+            });
+    </script>
+</body>
+</html>

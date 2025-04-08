@@ -1,0 +1,12 @@
+services:
+  python-backend:
+    build: ./python-backend
+    ports:
+      - "8000:8000"
+
+  node-backend:
+    build: ./node-backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - python-backend
