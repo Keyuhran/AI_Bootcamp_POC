@@ -1,42 +1,29 @@
-# Import necessary libraries
-import nltk
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-import extract_msg
-import json
-import os
 import sys
+import json
+import pandas as pd
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+from transformers import pipeline
+import extract_msg  # For .msg file parsing
 
-# Ensure nltk looks in the right place
 
-nltk.data.path.append("/usr/share/nltk_data")
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+from transformers import pipeline
+import re
 
-vader_path = os.path.join("/usr/share/nltk_data", "sentiment", "vader_lexicon.txt")
+stop_words = set(ENGLISH_STOP_WORDS)
+sentiment_pipeline = pipeline("sentiment-analysis")
 
-# Initialize sentiment analyzer and lemmatizer
-analyzer = SentimentIntensityAnalyzer(lexicon_file=vader_path)
-lemmatizer = WordNetLemmatizer()
+def clean_text(text, stop_words):
+    text = text.lower()
+    text = re.sub(r"\d+", "", text)  # remove digits
+    return ' '.join([word for word in text.split() if word not in stop_words])
 
-# Custom list of words to exclude from sentiment scoring
-excluded_words = {"PUB", "pub"}
-
-# Preprocessing function with exclusions
-def preprocess_text(text):
-    tokens = word_tokenize(text.lower())
-    filtered_tokens = [
-        token for token in tokens
-        if token.isalnum() and token not in stopwords.words('english') and token not in excluded_words
-    ]
-    lemmatized_tokens = [lemmatizer.lemmatize(token) for token in filtered_tokens]
-    return ' '.join(lemmatized_tokens)
-
-# Sentiment scoring function (0 to 1)
 def get_sentiment_score(text):
-    processed_text = preprocess_text(text)
-    score = analyzer.polarity_scores(processed_text)['pos']  # use 'pos' score for positivity
-    return processed_text, round(score, 2)
+    cleaned = clean_text(text, stop_words)
+    result = sentiment_pipeline(cleaned)[0]
+    score = round(result['score'], 3)
+    sentiment_score = score if result['label'] == "POSITIVE" else -score
+    return cleaned, sentiment_score
 
 # =============================
 # Main Execution Block
@@ -49,7 +36,6 @@ if __name__ == "__main__":
     msg_body = ""
 
     try:
-        # Try parsing as .msg
         try:
             msg = extract_msg.Message(file_path)
             msg_sender = msg.sender or ""
@@ -57,11 +43,10 @@ if __name__ == "__main__":
             msg_body = msg.body or ""
             email_text = msg_body
         except:
-            # Fallback to plain text file
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     email_text = f.read()
-                    msg_body = email_text  # Fill fallback msg_body
+                    msg_body = email_text
             except UnicodeDecodeError:
                 with open(file_path, 'r', encoding='latin-1') as f:
                     email_text = f.read()
@@ -86,9 +71,9 @@ if __name__ == "__main__":
         "emailSubject": msg_subject,
         "emailBody": msg_body,
         "summary": f"The email you uploaded has a sentiment score of {sentiment_score}.",
-        "score": sentiment_score,
+        "score": str(sentiment_score),
         "showDetails": True
     }
-
+    print("DEBUG:", result)
+    print("FINAL JSON OUTPUT:", json.dumps(result))
     print(json.dumps(result))
-

@@ -7,9 +7,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-# Create the directory and copy the lexicon file
-RUN mkdir -p /usr/share/nltk_data/sentiment
-COPY vader_lexicon.txt /usr/share/nltk_data/sentiment/vader_lexicon.txt
 
 
 # Copy the rest of your code

@@ -98,12 +98,7 @@ app.post('/analyze-text', async (req, res) => {
   }
 
   try {
-    const form = new FormData();
-    form.append('text', text);
-
-    const response = await axios.post('http://python-backend:8000/analyze', form, {
-      headers: form.getHeaders(),
-    });
+    const response = await axios.post('http://python-backend:8000/analyze', { text });
 
     const json = response.data;
     storedEmailText = json.emailText;
@@ -128,6 +123,7 @@ app.post('/analyze-text', async (req, res) => {
     res.status(500).json({ error: "Failed to analyze text" });
   }
 });
+
 
 // Upload .msg file to archive
 // To this:

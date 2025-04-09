@@ -7,6 +7,7 @@ from logics.email_query_handler import full_workflow
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from nlp import get_sentiment_score
+from fastapi import Request
 
 app = FastAPI()
 
@@ -31,10 +32,31 @@ async def chat(request: ChatRequest):
     return {"response": response}
 
 
-@app.post("/analyze")
-def analyze(text: str = Form(...)):
-    return get_sentiment_score(text)
 
+@app.post("/analyze")
+async def analyze(req: Request):
+    try:
+        data = await req.json()
+        text = data.get("text")
+        if not text:
+            return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
+
+        processed_text, sentiment_score = get_sentiment_score(text)
+
+        result = {
+            "emailText": text,
+            "emailSender": "",
+            "emailSubject": "",
+            "emailBody": text,
+            "summary": f"The email you uploaded has a sentiment score of {sentiment_score}.",
+            "score": str(sentiment_score),
+            "showDetails": True
+        }
+
+        return JSONResponse(content=result)
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/analyze-text")
 def analyze_text(payload: TextRequest):

@@ -236,10 +236,16 @@ wsproto==1.2.0
 yarl==1.15.5
 zipp==3.20.2
 chardet==5.2.0             
-kagglehub                  
-nltk==3.8.1                                  
+kagglehub                                                    
 pymupdf4llm==0.0.19          
 pysqlite3-binary==0.5.2    
 fastapi
 uvicorn[standard]
 python-multipart 
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.2.1
+transformers
+scikit-learn
+pandas
+extract-msg
