@@ -843,3 +843,7 @@ html, body {
 .btn-submit {
   color: white;
 }
+
+.navbar a:hover {
+  text-decoration: underline;
+}

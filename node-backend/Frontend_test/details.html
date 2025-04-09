@@ -6,16 +6,18 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="logo-container">
+        <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+        <div class="navbar">
+            <a href="index.html">Home</a>
+            <a href="data.html">Statistics</a>
+            <a href="file_upload.html">File Upload</a>
+            <a href="about.html">About Us</a>
+      </div>
+    </div>
     <div class="container">
         <div class="header">
-            <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
             <h2>Analysing: Email</h2>
-            <div class="navbar">
-                <a href="index.html">Home</a>
-                <a href="data.html">Statistics</a>
-                <a href="file_upload.html">File Upload</a>
-                <a href="about.html">About Us</a>
-              </div>
         </div>
 
         <div class="email-metadata">
@@ -54,10 +56,10 @@
                     
 
                     const icon = document.getElementById('sentiment-icon');
-                    if (data.emailScore > 0.25) {
+                    if (data.emailScore > 0.4) {
                         icon.src = 'media/Happy.png';
                         icon.alt = 'Positive Sentiment';
-                    } else if (data.emailScore > 0.15) {
+                    } else if (data.emailScore > 0) {
                         icon.src = 'media/Neutral.png';
                         icon.alt = 'Neutral Sentiment';
                     } else {
