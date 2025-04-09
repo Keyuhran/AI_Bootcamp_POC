@@ -2,16 +2,17 @@ import sys
 import json
 import pandas as pd
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-from transformers import pipeline
-import extract_msg  # For .msg file parsing
-
-
-from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import numpy as np
+import extract_msg
 import re
 
+# Load multilingual BERT sentiment model (1 to 5 stars)
+MODEL_NAME = "nlptown/bert-base-multilingual-uncased-sentiment"
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+
 stop_words = set(ENGLISH_STOP_WORDS)
-sentiment_pipeline = pipeline("sentiment-analysis")
 
 def clean_text(text, stop_words):
     text = text.lower()
@@ -19,11 +20,19 @@ def clean_text(text, stop_words):
     return ' '.join([word for word in text.split() if word not in stop_words])
 
 def get_sentiment_score(text):
-    cleaned = clean_text(text, stop_words)
-    result = sentiment_pipeline(cleaned)[0]
-    score = round(result['score'], 3)
-    sentiment_score = score if result['label'] == "POSITIVE" else -score
-    return cleaned, sentiment_score
+    try:
+        cleaned_text = clean_text(text, stop_words)
+        inputs = tokenizer(cleaned_text, return_tensors="pt", truncation=True, max_length=512, padding=True)
+        outputs = model(**inputs)
+        probs = outputs.logits.softmax(dim=1).detach().numpy()[0]
+
+        stars = np.argmax(probs) + 1  # 1 to 5 stars
+        normalized_score = round(((stars - 3) / 2), 3)  # scale -1 to 1
+        return cleaned_text, normalized_score, f"{stars}-star"
+
+    except Exception as e:
+        print("🔥 Error in get_sentiment_score:", str(e))
+        return text, 0.0, "error"
 
 # =============================
 # Main Execution Block
@@ -60,7 +69,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        processed_text, sentiment_score = get_sentiment_score(email_text)
+        processed_text, sentiment_score, sentiment_label = get_sentiment_score(email_text)
     except Exception as e:
         print(json.dumps({"error": f"Sentiment scoring failed: {str(e)}"}))
         sys.exit(1)
@@ -71,9 +80,9 @@ if __name__ == "__main__":
         "emailSubject": msg_subject,
         "emailBody": msg_body,
         "summary": f"The email you uploaded has a sentiment score of {sentiment_score}.",
-        "score": str(sentiment_score),
+        "score": sentiment_score,
+        "label": sentiment_label,
         "showDetails": True
     }
-    print("DEBUG:", result)
-    print("FINAL JSON OUTPUT:", json.dumps(result))
+
     print(json.dumps(result))

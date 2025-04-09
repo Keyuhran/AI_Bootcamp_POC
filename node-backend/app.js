@@ -135,11 +135,19 @@ app.post('/upload-msg', upload.array('files'), async (req, res) => {
       return res.status(400).json({ message: 'No files uploaded.' });
     }
 
-    const targetDir = path.join(__dirname, 'data/Queries Received and Email Responses');
+    const targetDir = path.join(__dirname, 'shared-data/Queries Received and Email Responses');
 
+
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+    
     for (const file of files) {
       const destPath = path.join(targetDir, file.originalname);
-      fs.renameSync(file.path, destPath);
+    
+      // Safely copy file across devices
+      fs.copyFileSync(file.path, destPath);
+      fs.unlinkSync(file.path); // remove temp file
     }
 
     res.json({ message: `${files.length} file(s) uploaded successfully.` });

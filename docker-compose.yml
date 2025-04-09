@@ -1,8 +1,13 @@
+volumes:
+     shared-data:
 services:
+
   python-backend:
     build: ./python-backend
     ports:
       - "8000:8000"
+    volumes:
+      - shared-data:/app/data
 
   node-backend:
     build: ./node-backend
@@ -10,3 +15,6 @@ services:
       - "3000:3000"
     depends_on:
       - python-backend
+    
+    volumes:
+      - shared-data:/app/shared-data

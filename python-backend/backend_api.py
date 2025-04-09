@@ -38,24 +38,28 @@ async def analyze(req: Request):
     try:
         data = await req.json()
         text = data.get("text")
+
         if not text:
             return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
 
-        processed_text, sentiment_score = get_sentiment_score(text)
+        print(">>> Received text length:", len(text))
+
+        cleaned, score, label = get_sentiment_score(text)
 
         result = {
             "emailText": text,
             "emailSender": "",
             "emailSubject": "",
             "emailBody": text,
-            "summary": f"The email you uploaded has a sentiment score of {sentiment_score}.",
-            "score": str(sentiment_score),
+            "summary": f"The email you uploaded has a sentiment score of {score}.",
+            "score": score,
             "showDetails": True
         }
 
         return JSONResponse(content=result)
 
     except Exception as e:
+        print("🔥 ERROR in /analyze:", str(e))
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/analyze-text")
