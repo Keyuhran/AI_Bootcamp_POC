@@ -89,6 +89,7 @@ html, body, #root {
   flex-grow: 1;
   padding: 0.5rem;
   font-size: 1rem;
+  
 }
 .chat-input:focus {
     border-color: #fff;
@@ -420,14 +421,17 @@ canvas {
 }
 
 .chat-input {
-  flex: 1;
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  min-height: 40px;
+  max-height: 30vh; /* 30% of viewport height */
+  line-height: 1.4;
   padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #bbb;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s ease;
+  font-size: 16px;
+  box-sizing: border-box;
 }
+
 
 .input-form-start {
   display: flex;
@@ -847,4 +851,25 @@ html, body {
 
 .navbar a:hover {
   text-decoration: underline;
+}
+
+textarea.chat-input {
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  min-height: 40px;
+  max-height: 30vh;
+  line-height: 1.4;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.chat-input-start::placeholder {
+  line-height: normal;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }

@@ -24,7 +24,7 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useRef, useEffect } = React;
 
     function QuickActionButton({ label, onClick }) {
       return (
@@ -37,6 +37,7 @@
     function App() {
       const userName = "Kieran";
       const [userInput, setUserInput] = useState("");
+      const textareaRef = useRef(null);
 
       const handleAnalysisClick = () => {
         setUserInput("Analyse this file: ");
@@ -50,10 +51,24 @@
         e.preventDefault();
         if (!userInput.trim()) return;
 
-        // Store and route to chatpage
         localStorage.setItem("initialMessage", userInput);
         window.location.href = "chatpage.html";
       };
+
+      useEffect(() => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        const resizeTextarea = () => {
+          textarea.style.height = "auto";
+          textarea.style.height = Math.min(textarea.scrollHeight, window.innerHeight * 0.3) + "px";
+        };
+
+        textarea.addEventListener("input", resizeTextarea);
+        resizeTextarea();
+
+        return () => textarea.removeEventListener("input", resizeTextarea);
+      }, [userInput]);
 
       return (
         <div className="app-container">
@@ -89,12 +104,24 @@
               </div>
 
               <form className="input-form-start" onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="Type here..."
+                <textarea
+                  ref={textareaRef}
+                 
                   className="chat-input-start"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
+                  rows={1}
+                  style={{
+                    overflowY: "auto",
+                    maxHeight: "30vh",
+                    resize: "none"
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
                 />
                 <button 
                   type="button" 

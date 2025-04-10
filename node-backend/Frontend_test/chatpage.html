@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Chatbot Conversation</title>
   <link rel="stylesheet" href="styles.css" />
+ 
 </head>
 <body>
   <div id="root"></div>
@@ -18,8 +19,6 @@
     </div>
   </div>
 
-
-
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -33,12 +32,11 @@
       const [selectedFile, setSelectedFile] = useState(null);
       const [isBotTyping, setIsBotTyping] = useState(false);
       const messagesEndRef = useRef(null);
+      const textareaRef = useRef(null);
 
       useEffect(() => {
         fetch("http://localhost:3000/create-interaction", {
           method: "POST",
-        }).then(res => {
-          if (!res.ok) console.error("❌ Failed to create interaction");
         });
 
         const storedMsg = localStorage.getItem("initialMessage");
@@ -52,10 +50,10 @@
           setMessages(prev => [...prev, userMessage]);
           localStorage.removeItem("initialMessage");
 
-          let response;
           const fetchResponse = async () => {
             setIsBotTyping(true);
             try {
+              let response;
               if (storedMsg.startsWith("Analyse this file:")) {
                 const cleanText = storedMsg.replace("Analyse this file:", "").trim();
                 response = await fetch("http://localhost:3000/analyze-text", {
@@ -82,9 +80,9 @@
               };
 
               setMessages(prev => [...prev, botMessage]);
-              setIsBotTyping(false);
             } catch (err) {
               console.error("❌ Error sending initial message to backend:", err);
+            } finally {
               setIsBotTyping(false);
             }
           };
@@ -107,10 +105,10 @@
         setMessages(prev => [...prev, userMessage]);
         setInput("");
 
-        let response;
-        let originalInput = input;
-
         try {
+          let response;
+          let originalInput = input;
+
           if (selectedFile) {
             const formData = new FormData();
             formData.append("file", selectedFile);
@@ -142,15 +140,16 @@
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             showDetails: data.showDetails,
             score: data.emailScore || data.score,
-            originalInput: originalInput
+            originalInput
           };
+
           setMessages(prev => [...prev, botMessage]);
         } catch (err) {
           console.error("❌ Error getting response:", err);
+        } finally {
+          setSelectedFile(null);
+          setIsBotTyping(false);
         }
-
-        setSelectedFile(null);
-        setIsBotTyping(false);
       };
 
       const handleAnalysisClick = () => {
@@ -158,8 +157,16 @@
       };
 
       useEffect(() => {
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, [messages]);
+
+      useEffect(() => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, window.innerHeight * 0.3) + 'px';
+      }, [input]);
 
       return (
         <div className="app-container">
@@ -214,25 +221,31 @@
                   <small>Bot · typing...</small>
                 </div>
               )}
-
               <div ref={messagesEndRef} />
             </div>
 
             <form className="input-form" onSubmit={handleSubmit}>
-              {/* 
-              <input
-                type="file"
-                className="file-upload"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
-              />
-              */}
-              <input
-                type="text"
-                placeholder="Type here..."
+              <textarea
+                id="chat-input"
                 className="chat-input"
+                placeholder="Type here..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+                style={{
+                  overflowY: 'auto',
+                  maxHeight: '30vh',
+                  resize: 'none'
+                }}
+                rows={1}
+                ref={textareaRef}
               />
+
               <button 
                 type="button" 
                 className="analysis-trigger-button"
