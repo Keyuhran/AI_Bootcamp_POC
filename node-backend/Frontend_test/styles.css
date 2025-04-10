@@ -423,12 +423,11 @@ canvas {
 .chat-input {
   width: 100%;
   resize: none;
+  gap: 10px;
   overflow: hidden;
   min-height: 40px;
   max-height: 30vh; /* 30% of viewport height */
-  line-height: 1.4;
   padding: 10px;
-  font-size: 16px;
   box-sizing: border-box;
 }
 
