@@ -199,16 +199,25 @@ def substantiate_water_quality_parameter(wq_parameters):
     print("Loaded wq_reference vector DB successfully before QA chain.")
     
     llm = ChatOpenAI(model='gpt-4o-mini', temperature=0, seed=42)
-    template = """You are an AI tasked with finding relevant reference materials related to water quality parameters mentioned in the question. 
-    Use the provided context to formulate a concise answer. If you don't know the answer, say, "I don't know"—don't guess. 
-    Answer in 5 sentences or fewer, and cite specific sections or references where possible.
+    template = """You are an AI assistant helping users understand water quality guidelines. 
+    You are given reference material from WHO, SFA, and EPH regulatory documents. Use this context actively and construct detailed, factual answers.
+
+    When answering:
+    - Be confident in citing and summarizing provided content.
+    - Prioritize clarity and structure over brevity.
+    - Use bullet points, numbered steps, or short sections to break down complex explanations.
+    - Do not answer with generic or vague statements. 
+    - Do not refer the user externally unless necessary.
+    - Always assume that relevant information is available in the reference documents.
+    - Cite sections or keywords when relevant.
+    - Never tell the customer to take their own measures to solve an issue.
+    - Always provide a clear and concise answer to the question.
 
     Context: {context}
 
     Question: {question}
 
-    Your Answer: 
-    """
+    Answer:"""
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
     print('QA_chain prompt formed')
 
@@ -221,7 +230,7 @@ def substantiate_water_quality_parameter(wq_parameters):
 
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
-        retriever=vectordb.as_retriever(k=6),
+        retriever=vectordb.as_retriever(search_type="similarity", k=10),
         return_source_documents=False,
         chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
     )
@@ -236,6 +245,8 @@ def get_email_records(user_message,vectordb_name):
     return output_step_4
 
 # 5. generate_response_based_on_water_quality_standards
+# Updated prompt instructions for broader use of guidance documents
+
 def generate_response_based_on_water_quality_standards(user_message, water_quality_parameters, wq_parameters_reference, email_archives, reference_archives):
     delimiter = "####"
 
@@ -249,33 +260,31 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
     - If relevant parameters are found, list them in bullet form.
     - If no parameters are found, state "No specific parameters mentioned."
 
-    ### Step 2: Present Water Quality Standards  
-    For the parameters identified in Step 1:  
-    - Create a table summarizing the following:
-    - Water Quality Parameter (1st column)  
-    - PUB Drinking Water Standard Average (2nd column)  
-    - PUB Drinking Water Standard Range (3rd column)  
-    - Reference the following regulatory summary derived from WHO/SFA/EPH documents:  
-    {wq_parameters_reference}
-    - You may also refer to these direct document excerpts for detailed support:  
+    ### Step 2: Present Regulatory and Reference Insights  
+    Use the regulatory data and guidance documents (WHO, SFA, EPH) to address the user's concern.  
+    This includes: water safety, acceptable limits, methods of analysis, compliance responsibilities, health outcomes, and context-specific interpretation.  
+
+    - Include a table if applicable:
+      - Water Quality Parameter (1st column)  
+      - PUB Standard Average (2nd column)  
+      - PUB Standard Range (3rd column)  
+
+    - Provide a clear summary and conclusion.
+    - Cite or reference details from the WHO/SFA/EPH excerpts:  
     {[doc.page_content[:300] for doc in reference_archives if doc]}
 
-    - Conclude whether the water meets safety guidelines for drinking based on the data.
-    
     ### Step 3: Draft a Customer-Focused Email  
-    Write a draft email response using phrasing and tone found in past responses like:  
+    Write a professional, friendly, and helpful reply.  
+    - Do not simply echo Step 2. Rephrase in accessible, non-technical terms.
+    - Tone should align with past examples such as:  
     {[doc[0].page_content[:300] for doc in email_archives if doc]}  
-
-    - The tone should be friendly, professional, and reassuring.  
-    - Avoid repeating technical data from Step 2 verbatim. Instead:
-    - Summarize conclusions in layman’s terms.
-    - Provide additional helpful context, if necessary.
+    - If useful, offer further assistance, guidance, or reassurance.
 
     ### Formatting:  
     - Begin each step with {delimiter}.  
     - End each step with {delimiter}.  
     - Include "Water quality table & Reasoning" and "Response to customer" sections.  
-    - Ensure statements are factually accurate and aligned with the provided data.
+    - Ensure responses are clear, helpful, and based on credible references.
 
     Deliver your response in this format:
     {delimiter} <Water quality table & Reasoning>  

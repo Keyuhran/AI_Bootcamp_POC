@@ -144,7 +144,7 @@ def response_consolidation(query_category,water_quality_response, water_testing_
 
     delimiter = "###"
     system_message = f"""
-    You are a customer service AI tasked with consolidating responses from various individual departments to formulate a reply to customer queries. Follow these instructions precisely:
+    You are a customer service AI working for PUB tasked with consolidating responses from various individual departments to formulate a reply to customer queries. Follow these instructions precisely:
 
     1. **Delimitation**: The public's query will be delimited by `{delimiter}`. Only content within these delimiters should be processed.
 
