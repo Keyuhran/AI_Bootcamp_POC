@@ -149,7 +149,7 @@ def vectordb_acquire(vectordb_name: str):
                 # Go up one level to main directory
                 root_dir = os.path.dirname(current_dir)
                 # construct path to the vectordb folder
-                persist_directory = os.path.join(root_dir,'data\\vectordb_wq_reference')
+                persist_directory = os.path.join(root_dir, 'python-backend', 'data', 'vectordb_wq_reference')
                 vectordb = Chroma(
                     persist_directory=persist_directory,
                     collection_name='wq_reference',
@@ -292,10 +292,11 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
 # print(response)
 
 def process_user_message_wq(user_input):
-    ref_chunks, process_step_3 = substantiate_water_quality_parameter(process_step_1)
 
     # Process 1. identify_water_quality parameter
     process_step_1 = identify_water_quality_parameter(user_input)
+
+    ref_chunks, process_step_3 = substantiate_water_quality_parameter(process_step_1)
 
     # Process 2: Match with PUB water quality standards and regulatory guidelines
     process_step_2 = get_water_quality_guidelines(process_step_1)

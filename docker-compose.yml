@@ -1,7 +1,9 @@
-volumes:
-     shared-data:
-services:
+version: "3.9"
 
+volumes:
+  shared-data:
+
+services:
   python-backend:
     build: ./python-backend
     ports:
@@ -15,6 +17,5 @@ services:
       - "3000:3000"
     depends_on:
       - python-backend
-    
     volumes:
       - shared-data:/app/shared-data
