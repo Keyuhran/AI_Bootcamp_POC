@@ -199,7 +199,7 @@ def substantiate_water_quality_parameter(wq_parameters):
     print("Loaded wq_reference vector DB successfully before QA chain.")
     
     llm = ChatOpenAI(model='gpt-4o-mini', temperature=0, seed=42)
-    template = """You are an AI assistant helping users understand water quality guidelines. 
+    template = """You are an AI assistant under the company PUB helping users understand water quality guidelines. 
     You are given reference material from WHO, SFA, and EPH regulatory documents. Use this context actively and construct detailed, factual answers.
 
     When answering:
@@ -210,7 +210,7 @@ def substantiate_water_quality_parameter(wq_parameters):
     - Do not refer the user externally unless necessary.
     - Always assume that relevant information is available in the reference documents.
     - Cite sections or keywords when relevant.
-    - Never tell the customer to take their own measures to solve an issue.
+    - Never tell the customer seek assistance from other authorities. PUB is the responsible party.
     - Always provide a clear and concise answer to the question.
 
     Context: {context}
