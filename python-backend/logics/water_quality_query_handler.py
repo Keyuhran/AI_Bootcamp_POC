@@ -271,7 +271,7 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
 
     - Provide a clear summary and conclusion.
     - Cite or reference details from the WHO/SFA/EPH excerpts:  
-    {[doc.page_content[:300] for doc in reference_archives if doc]}
+    {[doc.page_content[:1000] for doc in reference_archives if doc]}
 
     ### Step 3: Draft a Customer-Focused Email  
     Write a professional, friendly, and helpful reply.  
@@ -281,14 +281,12 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
     - If useful, offer further assistance, guidance, or reassurance.
 
     ### Formatting:  
-    - Begin each step with {delimiter}.  
-    - End each step with {delimiter}.  
     - Include "Water quality table & Reasoning" and "Response to customer" sections.  
     - Ensure responses are clear, helpful, and based on credible references.
 
     Deliver your response in this format:
-    {delimiter} <Water quality table & Reasoning>  
-    {delimiter} <response to customer>
+    <Water quality table & Reasoning>  
+    <response to customer>
     '''
     messages = [
         {'role': 'system', 'content': system_message},
@@ -319,6 +317,6 @@ def process_user_message_wq(user_input):
     process_step_4b = get_email_records(user_input,'wq_reference') 
 
     # Process 5: Generate Response based on Course Details
-    reply = generate_response_based_on_water_quality_standards(user_input,process_step_2,process_step_3,process_step_4a,ref_chunks)
+    reply = generate_response_based_on_water_quality_standards(user_input, process_step_2, process_step_3, process_step_4a, [doc[0] for doc in process_step_4b if doc])
 
     return reply
