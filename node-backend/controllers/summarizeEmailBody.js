@@ -1,4 +1,4 @@
-// controllers/summarizeEmailBody.js
+// This script handles the automatic summarization of emails using OpenAI, to summarize emails for the user.
 const { OpenAI } = require('openai');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -22,7 +22,7 @@ async function summarizeEmail(emailBody) {
         },
       ],
       temperature: 0.3,
-      max_tokens: 150,
+      max_tokens: 400,
     });
 
     return response.choices[0].message.content.trim();

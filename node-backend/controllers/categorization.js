@@ -1,7 +1,7 @@
-// controllers/summarizeEmailBody.js
-const { OpenAI } = require('openai');
+// this file handles the categorization of queries created using OpenAI, and sorts them into predetermined categories, which have been registed in the database as a function
 const dotenv = require('dotenv');
 const path = require('path');
+const { OpenAI } = require('openai');
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
