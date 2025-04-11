@@ -22,7 +22,6 @@ from helper_functions.llm import count_tokens
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import chromadb
-
 import asyncio
 from functools import partial
 
@@ -123,7 +122,6 @@ def vectordb_acquire(vectordb_name: str):
                 vectordb = create_wq_reference_vectordb(embeddings_model)
             return vectordb
 
-
 def identify_water_quality_parameter(user_message):
     delimiter = "####"
     system_message = f"""
@@ -166,7 +164,7 @@ def substantiate_water_quality_parameter(wq_parameters):
 
     retrieved_docs = vectordb.as_retriever(k=10).get_relevant_documents(f'Obtain guideline values for {wq_parameters}')
     if not retrieved_docs:
-        return "No relevant reference materials found for the given parameters."
+        return [], "No relevant reference materials found for the given parameters."
 
     try:
         qa_chain = RetrievalQA.from_chain_type(
@@ -177,17 +175,18 @@ def substantiate_water_quality_parameter(wq_parameters):
         )
         answer = qa_chain.invoke(f'Obtain the guideline values and relevant information for the parameters listed in {wq_parameters}')
     except Exception as e:
-        return f"Error during QA chain execution: {str(e)}"
+        return [], f"Error during QA chain execution: {str(e)}"
 
-    return answer
+    return retrieved_docs, answer
 
 def get_email_records(user_message,vectordb_name):
     vectordb = vectordb_acquire(vectordb_name)
     output_step_4 = vectordb.similarity_search_with_relevance_scores(user_message, k=4)
     return output_step_4
 
-def generate_response_based_on_water_quality_standards(user_message, water_quality_parameters, wq_parameters_reference, email_archives):
+def generate_response_based_on_water_quality_standards(user_message, water_quality_parameters, wq_parameters_reference, email_archives, reference_archives):
     delimiter = "####"
+    reference_snippets = "\n\n".join(doc.page_content[:1000] for doc in reference_archives if doc)
     system_message = f'''
     Follow these steps to answer customer queries about water quality. The customer query will be delimited with a pair {delimiter}.
 
@@ -198,39 +197,39 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
     - If relevant parameters are found, list them in bullet form.
     - If no parameters are found, state "No specific parameters mentioned."
 
-    ### Step 2: Present Water Quality Standards  
-    For the parameters identified in Step 1:  
-    - Create a table summarizing the following:
-    - Water Quality Parameter (1st column)  
-    - PUB Drinking Water Standard Average (2nd column)  
-    - PUB Drinking Water Standard Range (3rd column)  
-    - Use WHO Guidelines and EPH Regulations to substantiate the response for each parameter.
-    - Conclude whether the water meets safety guidelines for drinking based on the data.
+    ### Step 2: Present Regulatory and Reference Insights  
+    Use the regulatory data and guidance documents (WHO, SFA, EPH) to address the user's concern.  
+    This includes: water safety, acceptable limits, methods of analysis, compliance responsibilities, health outcomes, and context-specific interpretation.  
+
+    - Include a table if applicable:
+      - Water Quality Parameter (1st column)  
+      - PUB Standard Average (2nd column)  
+      - PUB Standard Range (3rd column)  
+
+    - Provide a clear summary and conclusion.
+    - Cite or reference details from the WHO/SFA/EPH excerpts:  
+    {reference_snippets}
 
     ### Step 3: Draft a Customer-Focused Email  
-    Write a draft email response using information from {email_archives}.  
-    - The tone should be friendly, professional, and reassuring.  
-    - Avoid repeating technical data from Step 2 verbatim. Instead:
-    - Summarize conclusions in layman’s terms.
-    - Provide additional helpful context, if necessary.
-    - Use examples or templates from {email_archives} to align the style with past correspondence.  
+    Write a professional, friendly, and helpful reply.  
+    - Do not simply echo Step 2. Rephrase in accessible, non-technical terms.
+    - Tone should align with past examples such as:  
+    {[doc[0].page_content[:300] for doc in email_archives if doc]}  
+    - If useful, offer further assistance, guidance, or reassurance.
 
     ### Formatting:  
-    - Begin each step with {delimiter}.  
-    - End each step with {delimiter}.  
     - Include "Water quality table & Reasoning" and "Response to customer" sections.  
-    - Ensure statements are factually accurate and aligned with the provided data.
+    - Ensure responses are clear, helpful, and based on credible references.
 
     Deliver your response in this format:
-    {delimiter} <Water quality table & Reasoning>  
-    {delimiter} <response to customer>
+    <Water quality table & Reasoning>  
+    <response to customer>
     '''
-    messages =  [
-        {'role':'system','content': system_message},
-        {'role':'user','content': f"{delimiter}{user_message}{delimiter}"},
+    messages = [
+        {'role': 'system', 'content': system_message},
+        {'role': 'user', 'content': f"{delimiter}{user_message}{delimiter}"},
     ]
-    response_to_customer = get_completion_by_messages(messages)
-    return response_to_customer
+    return get_completion_by_messages(messages)
 
 async def process_user_message_wq(user_input):
     process_step_1 = identify_water_quality_parameter(user_input)
@@ -243,8 +242,8 @@ async def process_user_message_wq(user_input):
         loop.run_in_executor(None, partial(substantiate_water_quality_parameter, process_step_1)),
         loop.run_in_executor(None, partial(get_email_records, user_input, 'email_semantic_98'))
     ]
-    process_step_2, process_step_3, process_step_4 = await asyncio.gather(*tasks)
+    process_step_2, (ref_chunks, process_step_3), process_step_4 = await asyncio.gather(*tasks)
     print('All async processes completed successfully')
 
-    reply = generate_response_based_on_water_quality_standards(user_input, process_step_2, process_step_3, process_step_4)
+    reply = generate_response_based_on_water_quality_standards(user_input, process_step_2, process_step_3, process_step_4, ref_chunks)
     return reply

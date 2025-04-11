@@ -34,98 +34,54 @@ parameter_list = water_quality_df['Parameter List'].tolist()
 # Creation of vectordb for email responses
 def create_email_vectordb(embeddings_model,vectordb_name):
     vectorstore_path = "data/vectordb_" + vectordb_name
-    # Use .listdir() method to list all the files and directories of a specified location
-    # Define directory for emails
     directory = os.listdir('data/Queries Received and Email Responses')
-    # Empty list which will be used to append new values
     list_of_emails = []
-
     for filename in directory:
-        filename = "data" + '/' + 'Queries Received and Email Responses' + '/' + filename
+        filename = os.path.join('data', 'Queries Received and Email Responses', filename)
         loader = OutlookMessageLoader(filename)
         text_from_file = loader.load()
-        # append the text from the single file to the existing list
         list_of_emails.append(text_from_file[0])
-        # print(f"Successfully read from {filename}")
-    # Create the text splitter
     text_splitter = SemanticChunker(embeddings_model)
-    # Split the documents into smaller chunks
     splitted_documents = text_splitter.split_documents(list_of_emails)
-    # Create Vector Database
     vectordb = Chroma.from_documents(
         filter_complex_metadata(splitted_documents),
         embedding=embeddings_model, 
         collection_name= vectordb_name, 
-        persist_directory= vectorstore_path # define location directory to save the vectordb
+        persist_directory= vectorstore_path
     )
-    return vectordb # return vectordb to be used
+    return vectordb
 
 def create_wq_reference_vectordb(embeddings_model):
-    # Load in documents 
-    loader_eph = PyPDFLoader('data\code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.md')
+    loader_eph = PyPDFLoader('data/code-of-practice-on-drinking-water-sampling-and-safety-plans-sfa-apr-2019.pdf')
     doc_eph = loader_eph.load()
-    loader_who = PyPDFLoader('data\WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.md')
+    loader_who = PyPDFLoader('data/WHO GDWQ 4th ed 1st 2nd addenda 2022-eng.pdf')
     doc_who = loader_who.load()
-    loader_sfa = PyPDFLoader('data\Environmental Public Health (Water suitable for drinking)(No. 2) Regulations SFA Apr 2019.md')
+    loader_sfa = PyPDFLoader('data/Environmental Public Health (Water suitable for drinking)(No. 2) Regulations SFA Apr 2019.pdf')
     doc_sfa = loader_sfa.load()
- 
-    # Creating character splitter for document splitting and chunking
     splitter1 = RecursiveCharacterTextSplitter(
         separators=["\n\n", "\n", " ", ""],
         chunk_size=500,
         chunk_overlap=50,
         length_function=count_tokens
     )
-
-    split_eph = splitter1.split_documents(doc_eph)
-    split_who = splitter1.split_documents(doc_who)
-    split_sfa = splitter1.split_documents(doc_sfa)
-    split_doc_merge = split_eph + split_who + split_sfa
-
-    # Creating basic vector database
+    split_doc_merge = splitter1.split_documents(doc_eph + doc_who + doc_sfa)
     vectordb = Chroma.from_documents(
         collection_name="wq_reference",
         documents=split_doc_merge,
         embedding=embeddings_model,
-        persist_directory="data/vectordb_wq_reference",  # Where to save data locally, remove if not neccesary
+        persist_directory="data/vectordb_wq_reference"
     )
-
-    # # Alternate Code
-
-    # doc_load = doc_eph + doc_who + doc_sfa
-    # all_chunks = []
-    # for doc in doc_load:
-    #     chunks = splitter1.split_text(doc.page_content)
-    #     for chunk in chunks:
-    #         chunked_doc = {"text": chunk,"metadata":doc.metadata}
-    #         all_chunks.append(chunked_doc)
-
-    # vectordb = Chroma.from_texts(
-    #     texts=[doc["text"] for doc in all_chunks],
-    #     embedding=embeddings_model,
-    #     metadatas=[doc["metadata"] for doc in all_chunks],
-    #     collection_name="wq_reference",
-    #     persist_directory="data/vectordb_wq_reference"
-    # )
     return vectordb
 
-# Checking for presence of vectordb, spun off as a separate function as it is used on Step 3 and 4.
 def vectordb_acquire(vectordb_name: str):
-    # Create embeddings model
     embeddings_model = OpenAIEmbeddings(model = 'text-embedding-3-small',show_progress_bar=True)
     vectorstore_path = "data\\vectordb_" + vectordb_name
-    # Create code to differentiate between the two vectordbs (vectordb_email_semantic and vectordb_reference) in this workflow
     match vectordb_name.lower():
         case name if 'email' in name:
-        # check for presence of email_semantic vectordb
             if os.path.exists(vectorstore_path):
-                # If directory exists, load using Chroma.
                 print('VectorDB found, now loading existing vector database...')
-                # Obtain current script's directory
                 current_dir = os.path.dirname(os.path.abspath(__file__))
-                # Go up one level to main directory
                 root_dir = os.path.dirname(current_dir)
-                # construct path to the vectordb folder
                 persist_directory = os.path.join(root_dir,vectorstore_path)
                 vectordb = Chroma(
                     persist_directory=persist_directory,
@@ -136,19 +92,12 @@ def vectordb_acquire(vectordb_name: str):
             else:
                 print('email_semantic vector database directory not found, proceeding to create vector database.')
                 vectordb = create_email_vectordb(embeddings_model,vectordb_name)
-
-            return vectordb # return vectordb to be used
-        
+            return vectordb
         case name if 'wq_reference' in name:
-        # check for the presence of vectordb_wq_reference
             if os.path.exists('data\\vectordb_wq_reference'):
-                # If directory exists, load using Chroma.
                 print('VectorDB found, now loading existing vector database...')
-                # Obtain current script's directory
                 current_dir = os.path.dirname(os.path.abspath(__file__))
-                # Go up one level to main directory
                 root_dir = os.path.dirname(current_dir)
-                # construct path to the vectordb folder
                 persist_directory = os.path.join(root_dir, 'python-backend', 'data', 'vectordb_wq_reference')
                 vectordb = Chroma(
                     persist_directory=persist_directory,
@@ -159,29 +108,23 @@ def vectordb_acquire(vectordb_name: str):
             else:
                 print('wq_reference vector database directory not found, proceeding to create vector database.')
                 vectordb = create_wq_reference_vectordb(embeddings_model)
-                
-            return vectordb # return vectordb to be used
-        
+            return vectordb
+
 # 1. identify_water_quality parameter (keep)
 def identify_water_quality_parameter(user_message):
     delimiter = "####"
-
     system_message = f"""
     You will be provided with water quality queries. \
-    The water quality query will be enclosed in
-    the pair of {delimiter}.
+    The water quality query will be enclosed in the pair of {delimiter}.
     Decide if the query contains any specific parameters from the 'Parameter List' column in the below Dataframe.  
     {parameter_list}    
     If there are any relevant parameters found, output the names into a list. 
     If are no relevant parameters are found, output an empty list.
     Would you like to make another enquiry?".
     """
-
     messages =  [
-        {'role':'system',
-         'content': system_message},
-        {'role':'user',
-         'content': f"{delimiter}{user_message}{delimiter}"},
+        {'role':'system','content': system_message},
+        {'role':'user','content': f"{delimiter}{user_message}{delimiter}"},
     ]
     output_step_1 = get_completion_by_messages(messages)
     output_step_1 = eval(output_step_1)
@@ -197,7 +140,6 @@ def get_water_quality_guidelines(list_of_water_quality_parameters: list):
 def substantiate_water_quality_parameter(wq_parameters):
     vectordb = vectordb_acquire("wq_reference")
     print("Loaded wq_reference vector DB successfully before QA chain.")
-    
     llm = ChatOpenAI(model='gpt-4o-mini', temperature=0, seed=42)
     template = """You are an AI assistant under the company PUB helping users understand water quality guidelines. 
     You are given reference material from WHO, SFA, and EPH regulatory documents. Use this context actively and construct detailed, factual answers.
@@ -220,14 +162,9 @@ def substantiate_water_quality_parameter(wq_parameters):
     Answer:"""
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
     print('QA_chain prompt formed')
-
-    retrieved_docs = vectordb.as_retriever(k=6).get_relevant_documents(
-        f'Obtain guideline values for {wq_parameters}'
-    )
-    
+    retrieved_docs = vectordb.as_retriever(search_type="mmr", k=12, fetch_k=20).get_relevant_documents(f'Obtain guideline values for {wq_parameters}')
     if not retrieved_docs:
         return [], "No relevant reference materials found for the given parameters."
-
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=vectordb.as_retriever(search_type="similarity", k=10),
@@ -236,20 +173,17 @@ def substantiate_water_quality_parameter(wq_parameters):
     )
     answer = qa_chain.invoke(f'Obtain the guideline values and relevant information for the parameters listed in {wq_parameters}')
     return retrieved_docs, answer
+
 #4. Get relevant email records
 def get_email_records(user_message,vectordb_name):
-    # Check for presence of vectordb
     vectordb = vectordb_acquire(vectordb_name)
-
     output_step_4 = vectordb.similarity_search_with_relevance_scores(user_message, k=4)
     return output_step_4
 
 # 5. generate_response_based_on_water_quality_standards
-# Updated prompt instructions for broader use of guidance documents
-
 def generate_response_based_on_water_quality_standards(user_message, water_quality_parameters, wq_parameters_reference, email_archives, reference_archives):
     delimiter = "####"
-
+    reference_snippets = "\n\n".join(doc.page_content[:1000] for doc in reference_archives if doc)
     system_message = f'''
     Follow these steps to answer customer queries about water quality. The customer query will be delimited with a pair {delimiter}.
 
@@ -271,7 +205,7 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
 
     - Provide a clear summary and conclusion.
     - Cite or reference details from the WHO/SFA/EPH excerpts:  
-    {[doc.page_content[:1000] for doc in reference_archives if doc]}
+    {reference_snippets}
 
     ### Step 3: Draft a Customer-Focused Email  
     Write a professional, friendly, and helpful reply.  
@@ -292,31 +226,15 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
         {'role': 'system', 'content': system_message},
         {'role': 'user', 'content': f"{delimiter}{user_message}{delimiter}"},
     ]
-
     return get_completion_by_messages(messages)
 
-# response = generate_response_based_on_water_quality_standards(user_input,result_step_2,result_step_3,result_step_4)
-# print(response)
-
 def process_user_message_wq(user_input):
-
-    # Process 1. identify_water_quality parameter
     process_step_1 = identify_water_quality_parameter(user_input)
-
     ref_chunks, process_step_3 = substantiate_water_quality_parameter(process_step_1)
-
-    # Process 2: Match with PUB water quality standards and regulatory guidelines
     process_step_2 = get_water_quality_guidelines(process_step_1)
-
-    # Process 3: Match with PUB water quality standards and regulatory guidelines
     process_step_3 = substantiate_water_quality_parameter(process_step_1)
     print('qa_chain invoked successfully initiaized')
-
-    # Process 4: Match with PUB water quality standards and regulatory guidelines
     process_step_4a = get_email_records(user_input,'email_semantic_98') 
     process_step_4b = get_email_records(user_input,'wq_reference') 
-
-    # Process 5: Generate Response based on Course Details
-    reply = generate_response_based_on_water_quality_standards(user_input, process_step_2, process_step_3, process_step_4a, [doc[0] for doc in process_step_4b if doc])
-
+    reply = generate_response_based_on_water_quality_standards(user_input, process_step_2, process_step_3, process_step_4a, ref_chunks)
     return reply
