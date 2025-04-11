@@ -1,4 +1,4 @@
-# chat_backend.py
+# backend for running the FastAPI server for the chatbot
 from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your frontend origin
+    allow_origins=["http://localhost:3000"],  #frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,6 +25,7 @@ class ChatRequest(BaseModel):
 class TextRequest(BaseModel):
     text: str
 
+#regular route for messages
 @app.post("/chat")
 async def chat(request: ChatRequest):
     public_query, email_elements = text_import(request.content)
@@ -32,7 +33,7 @@ async def chat(request: ChatRequest):
     return {"response": response}
 
 
-
+#route to analyse text \
 @app.post("/analyze")
 async def analyze(req: Request):
     try:
@@ -62,12 +63,3 @@ async def analyze(req: Request):
         print("🔥 ERROR in /analyze:", str(e))
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-@app.post("/analyze-text")
-def analyze_text(payload: TextRequest):
-    return {
-        "emailText": payload.text,
-        "emailSender": "noreply@example.com",
-        "emailSubject": "Mock subject",
-        "emailBody": payload.text,
-        "score": 0
-    }

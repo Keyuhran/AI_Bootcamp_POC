@@ -1,3 +1,4 @@
+// This script contains all the routes and logic for the Node.js backend server
 const express = require('express');
 const cors = require('cors');
 const path = require('path');

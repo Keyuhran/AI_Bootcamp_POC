@@ -1,4 +1,4 @@
-// Database.js
+// Script used in conjunction with data.js to fetch data from Supabase
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 

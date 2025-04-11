@@ -1,3 +1,4 @@
+// This file contains the code to fetch the relevant data from supabase for the graphs
 async function fetchData() {
     try {
         const response = await fetch('/api/interactions'); // Fetch data from backend

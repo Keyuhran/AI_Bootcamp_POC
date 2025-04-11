@@ -1,3 +1,8 @@
+#this entire python file is responsible for the sentiment analysis 
+#of the email text. It uses a pre-trained multilingual BERT model to classify the sentiment of the email text into a score between -1 and 1, 
+# and also provides a star rating from 1 to 5. The script handles both .msg files and plain text files, and it extracts the sender, 
+# subject, and body of the email for further processing.
+
 import sys
 import json
 import pandas as pd
