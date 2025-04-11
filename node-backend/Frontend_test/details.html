@@ -47,8 +47,6 @@
         fetch('/get-email-content')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('email-subject').textContent = data.emailSubject || 'N/A';
-                document.getElementById('email-sender').textContent = data.emailSender || 'N/A';
                 document.getElementById('email-body').textContent = data.emailBody || 'No email body found.';
                 document.getElementById('email-summary').textContent = data.emailSummary || 'No summary found.';
                 // Display the score
