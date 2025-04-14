@@ -16,7 +16,7 @@ const FormData = require('form-data');
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
-const PORT = 3000;
+//const PORT = 3000;
 
 // Middleware
 app.use(cors());
@@ -248,6 +248,7 @@ app.get('/details', (req, res) => {
 
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
