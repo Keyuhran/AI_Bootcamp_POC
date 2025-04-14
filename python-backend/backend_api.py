@@ -8,6 +8,8 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from nlp import get_sentiment_score
 from fastapi import Request
+import os
+import uvicorn
 
 app = FastAPI()
 
@@ -63,3 +65,11 @@ async def analyze(req: Request):
         print("🔥 ERROR in /analyze:", str(e))
         return JSONResponse(status_code=500, content={"error": str(e)})
 
+
+
+if __name__ == "__main__":
+    import os
+    import uvicorn
+
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

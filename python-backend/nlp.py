@@ -31,8 +31,8 @@ def get_sentiment_score(text):
         outputs = model(**inputs)
         probs = outputs.logits.softmax(dim=1).detach().numpy()[0]
 
-        stars = np.argmax(probs) + 1  # 1 to 5 stars
-        normalized_score = round(((stars - 3) / 2), 3)  # scale -1 to 1
+        stars = np.argmax(probs) + 1  
+        normalized_score = round(((stars - 3) / 2), 3)  
         return cleaned_text, normalized_score, f"{stars}-star"
 
     except Exception as e:
