@@ -1,122 +1,121 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "containerGroupName": {
-        "type": "string",
-        "defaultValue": "myContainerGroup",
-        "metadata": {
-          "description": "Name for the container group."
-        }
-      },
-      "dnsNameLabel": {
-        "type": "string",
-        "defaultValue": "myacimulticontainer",
-        "metadata": {
-          "description": "DNS name for public endpoint, e.g. http://myacimulticontainer.region.azurecontainer.io"
-        }
-      },
-      "acrServer": {
-        "type": "string",
-        "defaultValue": "pubchatbot.azurecr.io",
-        "metadata": {
-          "description": "ACR server name (e.g., pubchatbot.azurecr.io)."
-        }
-      },
-      "acrUsername": {
-        "type": "string",
-        "defaultValue": "",
-        "metadata": {
-          "description": "ACR username if using admin user or service principal creds."
-        }
-      },
-      "acrPassword": {
-        "type": "securestring",
-        "defaultValue": "",
-        "metadata": {
-          "description": "ACR password (admin user or SP credential)."
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "containerGroupName": {
+      "type": "string",
+      "defaultValue": "myContainerGroup",
+      "metadata": {
+        "description": "Name for the container group."
       }
     },
-    "variables": {
-      "nodeContainerName": "node-backend",
-      "nodeImage": "[concat(parameters('acrServer'), '/ai_bootcamp_poc/node-backend:latest')]",
-      "pythonContainerName": "python-backend",
-      "pythonImage": "[concat(parameters('acrServer'), '/ai_bootcamp_poc/python-backend:latest')]"
-    },
-    "resources": [
-      {
-        "type": "Microsoft.ContainerInstance/containerGroups",
-        "apiVersion": "2021-10-01",
-        "name": "[parameters('containerGroupName')]",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "containers": [
-            {
-              "name": "[variables('nodeContainerName')]",
-              "properties": {
-                "image": "[variables('nodeImage')]",
-                "resources": {
-                  "requests": {
-                    "cpu": 1,
-                    "memoryInGB": 1.5
-                  }
-                },
-                "ports": [
-                  {
-                    "port": 3000
-                  }
-                ]
-              }
-            },
-            {
-              "name": "[variables('pythonContainerName')]",
-              "properties": {
-                "image": "[variables('pythonImage')]",
-                "resources": {
-                  "requests": {
-                    "cpu": 1,
-                    "memoryInGB": 1.5
-                  }
-                },
-                "ports": [
-                  {
-                    "port": 8000
-                  }
-                ]
-              }
-            }
-          ],
-          "osType": "Linux",
-          "ipAddress": {
-            "type": "Public",
-            "dnsNameLabel": "[parameters('dnsNameLabel')]",
-            "ports": [
-              {
-                "protocol": "TCP",
-                "port": 3000
-              },
-              {
-                "protocol": "TCP",
-                "port": 8000
-              }
-            ]
-          },
-          "imageRegistryCredentials": [
-            {
-              "server": "[parameters('acrServer')]",
-              "username": "[parameters('acrUsername')]",
-              "password": "[parameters('acrPassword')]"
-            }
-          ]
-        }
+    "dnsNameLabel": {
+      "type": "string",
+      "defaultValue": "myacimulticontainer",
+      "metadata": {
+        "description": "DNS name for public endpoint."
       }
-    ],
-    "outputs": {
-      "containerGroupFQDN": {
-        "type": "string",
-        "value": "[reference(resourceId('Microsoft.ContainerInstance/containerGroups', parameters('containerGroupName'))).ipAddress.fqdn]"
+    },
+    "acrServer": {
+      "type": "string",
+      "defaultValue": "pubchatbot.azurecr.io",
+      "metadata": {
+        "description": "ACR server name (e.g., pubchatbot.azurecr.io)."
+      }
+    },
+    "acrUsername": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "ACR username if using admin user or service principal creds."
+      }
+    },
+    "acrPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "ACR password (admin user or SP credential)."
       }
     }
+  },
+  "variables": {
+    "nodeContainerName": "node-backend",
+    "nodeImage": "[concat(parameters('acrServer'), '/ai_bootcamp_poc/node-backend:v3')]",
+    "pythonContainerName": "python-backend",
+    "pythonImage": "[concat(parameters('acrServer'), '/ai_bootcamp_poc/python-backend:v3')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ContainerInstance/containerGroups",
+      "apiVersion": "2021-10-01",
+      "name": "[parameters('containerGroupName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "containers": [
+          {
+            "name": "[variables('nodeContainerName')]",
+            "properties": {
+              "image": "[variables('nodeImage')]",
+              "resources": {
+                "requests": {
+                  "cpu": 1,
+                  "memoryInGB": 1.5
+                }
+              },
+              "ports": [
+                { "port": 3000 }
+              ],
+              "environmentVariables": [
+                {
+                  "name": "PYTHON_HOST",
+                  "value": "python-backend"
+                },
+                {
+                  "name": "PYTHON_PORT",
+                  "value": "8000"
+                }
+              ]
+            }
+          },
+          {
+            "name": "[variables('pythonContainerName')]",
+            "properties": {
+              "image": "[variables('pythonImage')]",
+              "resources": {
+                "requests": {
+                  "cpu": 1,
+                  "memoryInGB": 1.5
+                }
+              },
+              "ports": [
+                { "port": 8000 }
+              ]
+            }
+          }
+        ],
+        "osType": "Linux",
+        "ipAddress": {
+          "type": "Public",
+          "dnsNameLabel": "[parameters('dnsNameLabel')]",
+          "ports": [
+            { "protocol": "TCP", "port": 3000 },
+            { "protocol": "TCP", "port": 8000 }
+          ]
+        },
+        "imageRegistryCredentials": [
+          {
+            "server": "[parameters('acrServer')]",
+            "username": "[parameters('acrUsername')]",
+            "password": "[parameters('acrPassword')]"
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "containerGroupFQDN": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ContainerInstance/containerGroups', parameters('containerGroupName'))).ipAddress.fqdn]"
+    }
   }
-  
+}

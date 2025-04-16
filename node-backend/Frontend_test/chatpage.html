@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Chatbot Conversation</title>
   <link rel="stylesheet" href="styles.css" />
- 
 </head>
 <body>
   <div id="root"></div>
@@ -35,9 +34,7 @@
       const textareaRef = useRef(null);
 
       useEffect(() => {
-        fetch("http://localhost:3000/create-interaction", {
-          method: "POST",
-        });
+        fetch("/create-interaction", { method: "POST" });
 
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
@@ -56,13 +53,13 @@
               let response;
               if (storedMsg.startsWith("Analyse this file:")) {
                 const cleanText = storedMsg.replace("Analyse this file:", "").trim();
-                response = await fetch("http://localhost:3000/analyze-text", {
+                response = await fetch("/analyze-text", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ text: cleanText })
                 });
               } else {
-                response = await fetch("http://localhost:8000/chat", {
+                response = await fetch("/chat", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ content: storedMsg })
@@ -112,21 +109,20 @@
           if (selectedFile) {
             const formData = new FormData();
             formData.append("file", selectedFile);
-
-            response = await fetch('http://localhost:3000/analyze-file', {
+            response = await fetch('/analyze-file', {
               method: 'POST',
               body: formData
             });
           } else if (input.startsWith("Analyse this file:")) {
             const cleanText = input.replace("Analyse this file:", "").trim();
             originalInput = cleanText;
-            response = await fetch("http://localhost:3000/analyze-text", {
+            response = await fetch("/analyze-text", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ text: cleanText })
             });
           } else {
-            response = await fetch("http://localhost:8000/chat", {
+            response = await fetch("/chat", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ content: input })
@@ -190,7 +186,7 @@
                     <button
                       onClick={async () => {
                         try {
-                          await fetch("http://localhost:3000/create-enquiry", {
+                          await fetch("/create-enquiry", {
                             method: "POST",
                             headers: {
                               "Content-Type": "application/json",

@@ -1,21 +1,21 @@
 # backend for running the FastAPI server for the chatbot
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from helper_functions.utility import text_import
 from logics.email_query_handler import full_workflow
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import JSONResponse
 from nlp import get_sentiment_score
-from fastapi import Request
 import os
 import uvicorn
 
 app = FastAPI()
 
+# CORS is optional now since only Node accesses this internally
+# You can keep this with allow_origins=["*"] or remove it entirely
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  #frontend origin
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,15 +27,14 @@ class ChatRequest(BaseModel):
 class TextRequest(BaseModel):
     text: str
 
-#regular route for messages
+# Route to handle chatbot queries
 @app.post("/chat")
 async def chat(request: ChatRequest):
     public_query, email_elements = text_import(request.content)
     response = await full_workflow(public_query, email_elements)
     return {"response": response}
 
-
-#route to analyse text \
+# Route to analyse email or raw text
 @app.post("/analyze")
 async def analyze(req: Request):
     try:
@@ -65,11 +64,6 @@ async def analyze(req: Request):
         print("🔥 ERROR in /analyze:", str(e))
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-
-
 if __name__ == "__main__":
-    import os
-    import uvicorn
-    
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)

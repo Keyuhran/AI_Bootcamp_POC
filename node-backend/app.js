@@ -8,7 +8,6 @@ const dataController = require('./controllers/dataController');
 const multer = require('multer');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
-const { spawn } = require('child_process');
 const { summarizeEmail } = require('./controllers/summarizeEmailBody');
 const { categorizeEmail } = require('./controllers/categorization');
 const axios = require('axios');
@@ -16,7 +15,11 @@ const FormData = require('form-data');
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
-//const PORT = 3000;
+
+// Environment config for Python backend
+const PYTHON_HOST = process.env.PYTHON_HOST || 'localhost';
+const PYTHON_PORT = process.env.PYTHON_PORT || '8000';
+const PYTHON_URL = `http://${PYTHON_HOST}:${PYTHON_PORT}`;
 
 // Middleware
 app.use(cors());
@@ -37,21 +40,13 @@ let storedEmailBody = "";
 let storedEmailScore = 0;
 let storedEmailSummary = "";
 
-
 const hashedPassword = process.env.UPLOAD_PASSWORD_HASH;
 
 app.post('/verify-password', async (req, res) => {
   const { password } = req.body;
   const valid = await bcrypt.compare(password, hashedPassword);
-  if (valid) {
-    res.sendStatus(200);
-  } else {
-    res.sendStatus(401);
-  }
+  res.sendStatus(valid ? 200 : 401);
 });
-
-// File analysis route
-
 
 // Proxy route to forward file to FastAPI /analyze
 app.post('/analyze-file', upload.single('file'), async (req, res) => {
@@ -59,11 +54,11 @@ app.post('/analyze-file', upload.single('file'), async (req, res) => {
     const form = new FormData();
     form.append('file', fs.createReadStream(req.file.path));
 
-    const response = await axios.post('http://python-backend:8000/analyze', form, {
+    const response = await axios.post(`${PYTHON_URL}/analyze`, form, {
       headers: form.getHeaders(),
     });
 
-    fs.unlinkSync(req.file.path); // clean up temp file
+    fs.unlinkSync(req.file.path);
 
     const json = response.data;
     storedEmailText = json.emailText;
@@ -93,15 +88,14 @@ app.post('/analyze-file', upload.single('file'), async (req, res) => {
 app.post('/analyze-text', async (req, res) => {
   let { text } = req.body;
   if (!text) return res.status(400).json({ error: 'Missing text' });
-
   if (text.startsWith("Analyse this file:")) {
     text = text.replace("Analyse this file:", "").trim();
   }
 
   try {
-    const response = await axios.post('http://python-backend:8000/analyze', { text });
-
+    const response = await axios.post(`${PYTHON_URL}/analyze`, { text });
     const json = response.data;
+
     storedEmailText = json.emailText;
     storedEmailSender = json.emailSender;
     storedEmailSubject = json.emailSubject;
@@ -125,30 +119,34 @@ app.post('/analyze-text', async (req, res) => {
   }
 });
 
+// Proxy /chat to FastAPI
+app.post('/chat', async (req, res) => {
+  try {
+    const response = await axios.post(`${PYTHON_URL}/chat`, req.body);
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error forwarding to FastAPI /chat:", error.message);
+    res.status(500).json({ error: "Failed to connect to Python /chat" });
+  }
+});
 
 // Upload .msg file to archive
-// To this:
 app.post('/upload-msg', upload.array('files'), async (req, res) => {
   try {
     const files = req.files;
-
     if (!files || files.length === 0) {
       return res.status(400).json({ message: 'No files uploaded.' });
     }
 
     const targetDir = path.join(__dirname, 'shared-data/Queries Received and Email Responses');
-
-
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
-    
+
     for (const file of files) {
       const destPath = path.join(targetDir, file.originalname);
-    
-      // Safely copy file across devices
       fs.copyFileSync(file.path, destPath);
-      fs.unlinkSync(file.path); // remove temp file
+      fs.unlinkSync(file.path);
     }
 
     res.json({ message: `${files.length} file(s) uploaded successfully.` });
@@ -158,25 +156,21 @@ app.post('/upload-msg', upload.array('files'), async (req, res) => {
   }
 });
 
+// Upload form route to FastAPI
 app.post('/upload', upload.single('file'), async (req, res) => {
   const form = new FormData();
   form.append('file', fs.createReadStream(req.file.path));
 
   try {
-    const response = await fetch('http://python-backend:8000/analyze', {
-      method: 'POST',
-      body: form,
+    const response = await axios.post(`${PYTHON_URL}/analyze`, form, {
       headers: form.getHeaders()
     });
-
-    const result = await response.json();
-    res.json(result);
+    res.json(response.data);
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to analyze file');
   }
 });
-
 
 // Enquiry creation
 app.post('/create-enquiry', async (req, res) => {
@@ -186,9 +180,8 @@ app.post('/create-enquiry', async (req, res) => {
   }
 
   try {
-    const cleanedDescription = description.replace(/^Analyse this file:\\s*/i, "").trim();
+    const cleanedDescription = description.replace(/^Analyse this file:\s*/i, "").trim();
     const category = await categorizeEmail(cleanedDescription);
-
     const result = await dataController.createEnquiry(cleanedDescription, category, sentiment);
     res.json({ message: "Enquiry created", result });
   } catch (error) {
@@ -245,7 +238,6 @@ app.get('/api/categories', async (req, res) => {
 app.get('/details', (req, res) => {
   res.sendFile(path.join(frontendPath, 'details.html'));
 });
-
 
 // Start server
 const port = process.env.PORT || 3000;

@@ -143,10 +143,11 @@
       }
 
       try {
-        const response = await fetch("http://localhost:3000/upload-msg", {
+        const response = await fetch("/upload-msg", {
           method: "POST",
           body: formData
         });
+
 
         if (!response.ok) throw new Error("Upload failed.");
         const result = await response.json();
