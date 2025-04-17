@@ -4,11 +4,9 @@
   <meta charset="UTF-8" />
   <title>Chatbot Conversation</title>
   <link rel="stylesheet" href="styles.css" />
- 
 </head>
 <body>
   <div id="root"></div>
-
   <div class="logo-container">
     <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
     <div class="navbar">
@@ -25,6 +23,8 @@
 
   <script type="text/babel">
     const { useState, useRef, useEffect } = React;
+    const BACKEND_URL = "http://172.188.31.105:3000";
+    const PYTHON_BACKEND_URL = "http://172.188.31.105:8000";
 
     function App() {
       const [messages, setMessages] = useState([]);
@@ -35,9 +35,7 @@
       const textareaRef = useRef(null);
 
       useEffect(() => {
-        fetch("http://localhost:3000/create-interaction", {
-          method: "POST",
-        });
+        fetch(`${BACKEND_URL}/create-interaction`, { method: "POST" });
 
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
@@ -56,13 +54,13 @@
               let response;
               if (storedMsg.startsWith("Analyse this file:")) {
                 const cleanText = storedMsg.replace("Analyse this file:", "").trim();
-                response = await fetch("http://localhost:3000/analyze-text", {
+                response = await fetch(`${BACKEND_URL}/analyze-text`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ text: cleanText })
                 });
               } else {
-                response = await fetch("http://localhost:8000/chat", {
+                response = await fetch(`${PYTHON_BACKEND_URL}/chat`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ content: storedMsg })
@@ -113,20 +111,20 @@
             const formData = new FormData();
             formData.append("file", selectedFile);
 
-            response = await fetch('http://localhost:3000/analyze-file', {
+            response = await fetch(`${BACKEND_URL}/analyze-file`, {
               method: 'POST',
               body: formData
             });
           } else if (input.startsWith("Analyse this file:")) {
             const cleanText = input.replace("Analyse this file:", "").trim();
             originalInput = cleanText;
-            response = await fetch("http://localhost:3000/analyze-text", {
+            response = await fetch(`${BACKEND_URL}/analyze-text`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ text: cleanText })
             });
           } else {
-            response = await fetch("http://localhost:8000/chat", {
+            response = await fetch(`${PYTHON_BACKEND_URL}/chat`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ content: input })
@@ -190,17 +188,14 @@
                     <button
                       onClick={async () => {
                         try {
-                          await fetch("http://localhost:3000/create-enquiry", {
+                          await fetch(`${BACKEND_URL}/create-enquiry`, {
                             method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
+                            headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                               description: (msg.originalInput || "No input provided").replace(/^Analyse this file:\s*/i, ""),
                               sentiment: msg.score || 0.0,
                             }),
                           });
-
                           window.location.href = "/details?score=" + msg.score;
                         } catch (err) {
                           console.error("❌ Failed to register enquiry:", err);
@@ -237,25 +232,12 @@
                     handleSubmit(e);
                   }
                 }}
-                style={{
-                  overflowY: 'auto',
-                  maxHeight: '30vh',
-                  resize: 'none'
-                }}
+                style={{ overflowY: 'auto', maxHeight: '30vh', resize: 'none' }}
                 rows={1}
                 ref={textareaRef}
               />
-
-              <button 
-                type="button" 
-                className="analysis-trigger-button"
-                onClick={handleAnalysisClick}
-              >
-                <img 
-                  src="media/Analyse.png" 
-                  alt="Analyze Icon" 
-                  style={{ height: '16px', width: '16px', marginRight: '4px' }}
-                />
+              <button type="button" className="analysis-trigger-button" onClick={handleAnalysisClick}>
+                <img src="media/Analyse.png" alt="Analyze Icon" style={{ height: '16px', width: '16px', marginRight: '4px' }} />
               </button>
             </form>
           </main>

@@ -61,6 +61,8 @@
   </div>
 
   <script>
+    const BACKEND_URL = "http://172.188.31.105:3000";
+    const PYTHON_BACKEND_URL = "http://172.188.31.105:8000";
     async function validatePassword() {
       const input = document.getElementById("password-input").value;
 
@@ -143,7 +145,7 @@
       }
 
       try {
-        const response = await fetch("http://localhost:3000/upload-msg", {
+        const response = await fetch(`${BACKEND_URL}/upload-msg`, {
           method: "POST",
           body: formData
         });
