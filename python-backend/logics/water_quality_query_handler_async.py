@@ -25,9 +25,13 @@ import chromadb
 import asyncio
 from functools import partial
 
+
 # Import the data file in csv format
 import pandas as pd
 import json
+# ensure vector DB persists across runtimes
+VECTOR_DB_DIR = "/app/data"
+
 # Convert .csv table into pandas Dataframe
 water_quality_df = pd.read_csv('data/utf8_Consolidated WQ Parameters.csv')
 parameter_list = water_quality_df['Parameter List'].tolist()
@@ -35,9 +39,7 @@ parameter_list = water_quality_df['Parameter List'].tolist()
 # Supporting functions
 # Creation of vectordb for email responses
 def create_email_vectordb(embeddings_model,vectordb_name):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(current_dir)
-    persist_directory = os.path.join(root_dir, 'python-backend', 'data', 'vectordb_' + vectordb_name)
+    persist_directory = os.path.join(VECTOR_DB_DIR, 'vectordb_' + vectordb_name)
 
     directory = os.listdir('data/Queries Received and Email Responses')
     list_of_emails = []
@@ -57,6 +59,7 @@ def create_email_vectordb(embeddings_model,vectordb_name):
         collection_name= vectordb_name, 
         persist_directory= persist_directory
     )
+    vectordb.persist()
     return vectordb
 
 def create_wq_reference_vectordb(embeddings_model):
@@ -76,9 +79,7 @@ def create_wq_reference_vectordb(embeddings_model):
 
     split_doc_merge = splitter1.split_documents(doc_eph + doc_who + doc_sfa)
 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(current_dir)
-    persist_directory = os.path.join(root_dir, 'python-backend', 'data', 'vectordb_wq_reference')
+    persist_directory = os.path.join(VECTOR_DB_DIR, 'vectordb_wq_reference')
 
     vectordb = Chroma.from_documents(
         collection_name="wq_reference",
@@ -86,16 +87,15 @@ def create_wq_reference_vectordb(embeddings_model):
         embedding=embeddings_model,
         persist_directory=persist_directory
     )
+    vectordb.persist()
     return vectordb
 
 def vectordb_acquire(vectordb_name: str):
     embeddings_model = OpenAIEmbeddings(model = 'text-embedding-3-small',show_progress_bar=True)
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(current_dir)
 
     match vectordb_name.lower():
         case name if 'email' in name:
-            persist_directory = os.path.join(root_dir, 'python-backend', 'data', 'vectordb_' + vectordb_name)
+            persist_directory = os.path.join(VECTOR_DB_DIR, 'vectordb_' + vectordb_name)
             if os.path.exists(persist_directory):
                 print(f'{vectordb_name} vector database found at {persist_directory}')
                 vectordb = Chroma(
@@ -109,7 +109,7 @@ def vectordb_acquire(vectordb_name: str):
             return vectordb
 
         case name if 'wq_reference' in name:
-            persist_directory = os.path.join(root_dir, 'python-backend', 'data', 'vectordb_wq_reference')
+            persist_directory = os.path.join(VECTOR_DB_DIR, 'vectordb_wq_reference')
             if os.path.exists(persist_directory):
                 print(f'{vectordb_name} vector database found at {persist_directory}')
                 vectordb = Chroma(
