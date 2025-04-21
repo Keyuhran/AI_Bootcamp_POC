@@ -59,7 +59,7 @@ app.post('/analyze-file', upload.single('file'), async (req, res) => {
     const form = new FormData();
     form.append('file', fs.createReadStream(req.file.path));
 
-    const response = await axios.post('http://python-backend:8000/analyze', form, {
+    const response = await axios.post('http://172.188.31.105:8000/analyze', form, {
       headers: form.getHeaders(),
     });
 
@@ -99,7 +99,7 @@ app.post('/analyze-text', async (req, res) => {
   }
 
   try {
-    const response = await axios.post('http://python-backend:8000/analyze', { text });
+    const response = await axios.post('http://172.188.31.105:8000/analyze', { text });
 
     const json = response.data;
     storedEmailText = json.emailText;
@@ -163,7 +163,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   form.append('file', fs.createReadStream(req.file.path));
 
   try {
-    const response = await fetch('http://python-backend:8000/analyze', {
+    const response = await fetch('http://172.188.31.105:8000/analyze', {
       method: 'POST',
       body: form,
       headers: form.getHeaders()
