@@ -48,8 +48,6 @@
       }, [messages]);
 
       useEffect(() => {
-        fetch(`${BACKEND_URL}/create-interaction`, { method: "POST" });
-
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
           const userMessage = {
@@ -117,6 +115,9 @@
         setInput("");
 
         try {
+          // ✅ Create interaction after user message
+          await fetch(`${BACKEND_URL}/create-interaction`, { method: "POST" });
+
           let response;
           let originalInput = input;
 

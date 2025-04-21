@@ -249,3 +249,4 @@ transformers
 scikit-learn
 pandas
 extract-msg
+apscheduler
