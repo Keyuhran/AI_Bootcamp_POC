@@ -34,6 +34,19 @@
       const messagesEndRef = useRef(null);
       const textareaRef = useRef(null);
 
+      // Load chat history from localStorage
+      useEffect(() => {
+        const cached = localStorage.getItem("chatHistory");
+        if (cached) {
+          setMessages(JSON.parse(cached));
+        }
+      }, []);
+
+      // Save chat history to localStorage
+      useEffect(() => {
+        localStorage.setItem("chatHistory", JSON.stringify(messages));
+      }, [messages]);
+
       useEffect(() => {
         fetch(`${BACKEND_URL}/create-interaction`, { method: "POST" });
 

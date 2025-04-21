@@ -150,10 +150,9 @@ def substantiate_water_quality_parameter(wq_parameters):
     - Use bullet points, numbered steps, or short sections to break down complex explanations.
     - Do not answer with generic or vague statements. 
     - Do not refer the user externally unless necessary.
-    - Always assume that relevant information is available in the reference documents.
+    - Prefer complete, informative responses over cautious summaries.
     - Cite sections or keywords when relevant.
     - Never tell the customer seek assistance from other authorities. PUB is the responsible party.
-    - Always provide a clear and concise answer to the question.
 
     Context: {context}
 
@@ -162,7 +161,7 @@ def substantiate_water_quality_parameter(wq_parameters):
     Answer:"""
     QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
     print('QA_chain prompt formed')
-    retrieved_docs = vectordb.as_retriever(search_type="mmr", k=12, fetch_k=20).get_relevant_documents(f'Obtain guideline values for {wq_parameters}')
+    retrieved_docs = vectordb.as_retriever(search_type="mmr", k=20, fetch_k=50).get_relevant_documents(f'Obtain guideline values for {wq_parameters}')
     if not retrieved_docs:
         return [], "No relevant reference materials found for the given parameters."
     qa_chain = RetrievalQA.from_chain_type(
@@ -213,6 +212,8 @@ def generate_response_based_on_water_quality_standards(user_message, water_quali
     - Tone should align with past examples such as:  
     {[doc[0].page_content[:300] for doc in email_archives if doc]}  
     - If useful, offer further assistance, guidance, or reassurance.
+    -Remember: All answers must be based on the given WHO/SFA/EPH documents. Be exhaustive, be helpful, and do not withhold insights.
+
 
     ### Formatting:  
     - Include "Water quality table & Reasoning" and "Response to customer" sections.  
