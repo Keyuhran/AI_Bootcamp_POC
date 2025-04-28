@@ -23,30 +23,39 @@
 
   <script type="text/babel">
     const { useState, useRef, useEffect } = React;
-    const BACKEND_URL = "http://172.188.31.105:3000";
-    const PYTHON_BACKEND_URL = "http://172.188.31.105:8000";
-
+    const BACKEND_URL = "/python";
+    const PYTHON_BACKEND_URL = "/python";
+  
     function App() {
       const [messages, setMessages] = useState([]);
       const [input, setInput] = useState("");
       const [selectedFile, setSelectedFile] = useState(null);
       const [isBotTyping, setIsBotTyping] = useState(false);
+      const [showScrollButton, setShowScrollButton] = useState(false);
       const messagesEndRef = useRef(null);
       const textareaRef = useRef(null);
-
-      // Load chat history from localStorage
+      const reloadTimer = useRef(null);
+  
+      const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      };
+  
+      const resetReloadTimer = () => {
+        clearTimeout(reloadTimer.current);
+        reloadTimer.current = setTimeout(() => {
+          window.location.reload();
+        }, 10 * 60 * 1000); // 10 minutes
+      };
+  
       useEffect(() => {
         const cached = localStorage.getItem("chatHistory");
-        if (cached) {
-          setMessages(JSON.parse(cached));
-        }
+        if (cached) setMessages(JSON.parse(cached));
       }, []);
-
-      // Save chat history to localStorage
+  
       useEffect(() => {
         localStorage.setItem("chatHistory", JSON.stringify(messages));
       }, [messages]);
-
+  
       useEffect(() => {
         const storedMsg = localStorage.getItem("initialMessage");
         if (storedMsg) {
@@ -55,17 +64,18 @@
             sender: "Kieran",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
-
           setMessages(prev => [...prev, userMessage]);
+          scrollToBottom();
           localStorage.removeItem("initialMessage");
-
+          resetReloadTimer(); // Start inactivity timer on initial message
+  
           const fetchResponse = async () => {
             setIsBotTyping(true);
             try {
               let response;
               if (storedMsg.startsWith("Analyse this file:")) {
                 const cleanText = storedMsg.replace("Analyse this file:", "").trim();
-                response = await fetch(`${BACKEND_URL}/analyze-text`, {
+                response = await fetch(`${BACKEND_URL}/analyze`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ text: cleanText })
@@ -77,7 +87,7 @@
                   body: JSON.stringify({ content: storedMsg })
                 });
               }
-
+  
               const data = await response.json();
               const botMessage = {
                 text: data.summary || data.response,
@@ -87,52 +97,50 @@
                 score: data.emailScore || data.score,
                 originalInput: storedMsg
               };
-
               setMessages(prev => [...prev, botMessage]);
+              scrollToBottom();
             } catch (err) {
               console.error("❌ Error sending initial message to backend:", err);
             } finally {
               setIsBotTyping(false);
             }
           };
-
+  
           fetchResponse();
         }
       }, []);
-
+  
       const handleSubmit = async (e) => {
-        setIsBotTyping(true);
         e.preventDefault();
         if (!input.trim() && !selectedFile) return;
-
+        setIsBotTyping(true);
+        resetReloadTimer(); // Reset inactivity timer on user message
+  
         const userMessage = {
           text: input || (selectedFile && `Uploaded file: ${selectedFile.name}`),
           sender: "Kieran",
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-
+  
         setMessages(prev => [...prev, userMessage]);
         setInput("");
-
+  
         try {
-          // ✅ Create interaction after user message
-          await fetch(`${BACKEND_URL}/create-interaction`, { method: "POST" });
-
+          await fetch(`/create-interaction`, { method: "POST" });
           let response;
           let originalInput = input;
-
+  
           if (selectedFile) {
             const formData = new FormData();
             formData.append("file", selectedFile);
-
-            response = await fetch(`${BACKEND_URL}/analyze-file`, {
+            response = await fetch(`/analyze-file`, {
               method: 'POST',
               body: formData
             });
           } else if (input.startsWith("Analyse this file:")) {
             const cleanText = input.replace("Analyse this file:", "").trim();
             originalInput = cleanText;
-            response = await fetch(`${BACKEND_URL}/analyze-text`, {
+            response = await fetch(`${BACKEND_URL}/analyze`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ text: cleanText })
@@ -144,7 +152,7 @@
               body: JSON.stringify({ content: input })
             });
           }
-
+  
           const data = await response.json();
           const botMessage = {
             text: data.summary || data.response,
@@ -154,7 +162,7 @@
             score: data.emailScore || data.score,
             originalInput
           };
-
+  
           setMessages(prev => [...prev, botMessage]);
         } catch (err) {
           console.error("❌ Error getting response:", err);
@@ -163,23 +171,34 @@
           setIsBotTyping(false);
         }
       };
-
+  
       const handleAnalysisClick = () => {
         setInput("Analyse this file: ");
       };
-
+  
       useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        scrollToBottom();
       }, [messages]);
-
+  
+      useEffect(() => {
+        const container = document.querySelector(".messages-container");
+        const handleScroll = () => {
+          if (!container) return;
+          const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+          setShowScrollButton(!nearBottom);
+        };
+        container?.addEventListener("scroll", handleScroll);
+        return () => container?.removeEventListener("scroll", handleScroll);
+      }, []);
+  
       useEffect(() => {
         const textarea = textareaRef.current;
         if (!textarea) return;
-
         textarea.style.height = 'auto';
         textarea.style.height = Math.min(textarea.scrollHeight, window.innerHeight * 0.3) + 'px';
       }, [input]);
-
+  
       return (
         <div className="app-container">
           <aside className="sidebar">
@@ -192,9 +211,9 @@
               <span>Advanced Reasoning</span>
             </div>
           </aside>
-
+  
           <main className="chat-content">
-            <div className="messages-container">
+            <div className="messages-container" style={{ position: "relative" }}>
               {messages.map((msg, idx) => (
                 <div key={idx} className={`message-bubble ${msg.sender === "Kieran" ? "user-message" : "bot-message"}`}>
                   <p>{msg.text}</p>
@@ -202,17 +221,27 @@
                     <button
                       onClick={async () => {
                         try {
-                          await fetch(`${BACKEND_URL}/create-enquiry`, {
+                          let cleanedInput = (msg.originalInput || "No input provided").replace(/^Analyse this file:\s*/i, "").trim();
+
+                          // Call your own server to summarize properly
+                          const response = await fetch('/summarize-text', {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                              description: (msg.originalInput || "No input provided").replace(/^Analyse this file:\s*/i, ""),
-                              sentiment: msg.score || 0.0,
-                            }),
+                            body: JSON.stringify({ body: cleanedInput })
                           });
-                          window.location.href = "/details?score=" + msg.score;
+
+                          const result = await response.json();
+
+                          // Save all necessary data
+                          localStorage.setItem("emailBody", cleanedInput); // Cleaned version
+                          localStorage.setItem("emailSummary", result.summary || "No summary found");
+                          localStorage.setItem("emailScore", msg.score || 0.0);
+
+                          setTimeout(() => {
+                            window.location.href = "/details";
+                          }, 200);
                         } catch (err) {
-                          console.error("❌ Failed to register enquiry:", err);
+                          console.error("❌ Failed to summarize or store details:", err);
                         }
                       }}
                       className="details-button"
@@ -223,7 +252,6 @@
                   <small>{msg.sender} · {msg.time}</small>
                 </div>
               ))}
-
               {isBotTyping && (
                 <div className="message-bubble bot-message typing-indicator">
                   <p><span className="dot"></span><span className="dot"></span><span className="dot"></span></p>
@@ -232,7 +260,7 @@
               )}
               <div ref={messagesEndRef} />
             </div>
-
+  
             <form className="input-form" onSubmit={handleSubmit}>
               <textarea
                 id="chat-input"
@@ -258,8 +286,8 @@
         </div>
       );
     }
-
+  
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
-</body>
-</html>
+  </body>
+  </html>

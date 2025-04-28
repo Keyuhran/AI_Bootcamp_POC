@@ -63,3 +63,15 @@ async def analyze(req: Request):
         print("🔥 ERROR in /analyze:", str(e))
         return JSONResponse(status_code=500, content={"error": str(e)})
 
+stored_email_data = {
+    "emailText": "",
+    "emailSender": "",
+    "emailSubject": "",
+    "emailBody": "",
+    "emailScore": 0.0,
+    "emailSummary": ""
+}
+
+@app.get("/get-email-content")
+async def get_email_content():
+    return JSONResponse(content=stored_email_data)

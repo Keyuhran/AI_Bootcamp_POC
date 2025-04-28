@@ -44,29 +44,32 @@
     </div>
 
     <script>
-        fetch('/get-email-content')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('email-body').textContent = data.emailBody || 'No email body found.';
-                document.getElementById('email-summary').textContent = data.emailSummary || 'No summary found.';
-                // Display the score
-                if (data.emailScore !== undefined) {
-                    document.getElementById('sentiment-score').textContent = data.emailScore;
-                    
-
-                    const icon = document.getElementById('sentiment-icon');
-                    if (data.emailScore > 0.4) {
-                        icon.src = 'media/Happy.png';
-                        icon.alt = 'Positive Sentiment';
-                    } else if (data.emailScore > 0) {
-                        icon.src = 'media/Neutral.png';
-                        icon.alt = 'Neutral Sentiment';
-                    } else {
-                        icon.src = 'media/Angry.png';
-                        icon.alt = 'Negative Sentiment';
-                    }
-                }
-            });
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = localStorage.getItem('emailBody') || 'No email body found.';
+            const summary = localStorage.getItem('emailSummary') || 'No summary found.';
+            const score = parseFloat(localStorage.getItem('emailScore')) || 0.0;
+    
+            document.getElementById('email-body').textContent = body;
+            document.getElementById('email-summary').textContent = summary;
+            document.getElementById('sentiment-score').textContent = score.toFixed(2);
+    
+            const icon = document.getElementById('sentiment-icon');
+            if (score > 0.4) {
+                icon.src = 'media/Happy.png';
+                icon.alt = 'Positive Sentiment';
+            } else if (score > 0) {
+                icon.src = 'media/Neutral.png';
+                icon.alt = 'Neutral Sentiment';
+            } else {
+                icon.src = 'media/Angry.png';
+                icon.alt = 'Negative Sentiment';
+            }
+    
+            // Auto-clear after displaying
+            localStorage.removeItem('emailBody');
+            localStorage.removeItem('emailSummary');
+            localStorage.removeItem('emailScore');
+        });
     </script>
 </body>
 </html>

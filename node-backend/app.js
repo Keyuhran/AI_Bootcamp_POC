@@ -241,6 +241,21 @@ app.get('/api/categories', async (req, res) => {
   }
 });
 
+// Summarize text using OpenAI
+app.post('/summarize-text', async (req, res) => {
+  const { body } = req.body;
+  if (!body) return res.status(400).json({ error: "Missing body to summarize" });
+
+  try {
+    const summary = await summarizeEmail(body);
+    res.json({ summary });
+  } catch (error) {
+    console.error("❌ Failed to summarize text:", error.message);
+    res.status(500).json({ error: "Summarization failed" });
+  }
+});
+
+
 // Static page: details.html
 app.get('/details', (req, res) => {
   res.sendFile(path.join(frontendPath, 'details.html'));
