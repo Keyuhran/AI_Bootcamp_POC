@@ -41,6 +41,24 @@ async function fetchLastFiveMonthsInteractions() {
   return results;
 }
 
+async function fetchHeatmapInteractions(targetMonth) {
+  const { data, error } = await supabase.rpc('get_interactions_count_by_day', {
+    target_month: targetMonth
+  });
+
+  if (error) {
+    console.error('❌ Error fetching heatmap interactions:', error);
+    return null;
+  }
+
+  const result = {};
+  data.forEach(record => {
+    result[record.day] = record.interaction_count;
+  });
+
+  console.log('✅ Heatmap interaction counts (processed):', result);
+  return result;
+}
 
 
 // ========================
@@ -77,6 +95,10 @@ async function fetchAllCategoryCounts() {
   return results;
 }
 
+// ========================
+// Enquiry and Interaction
+// ========================
+
 async function createEnquiry(description, category, sentiment) {
   const { data, error } = await supabase.rpc('create_enquiry', {
     new_description: description,
@@ -93,20 +115,16 @@ async function createEnquiry(description, category, sentiment) {
   return data;
 }
 
-
 async function createInteraction() {
-  const { data, error } = await supabase.rpc('create_interaction', {
-  });
+  const { data, error } = await supabase.rpc('create_interaction', {});
 
   if (error) {
     console.error('Error creating interaction:', error);
     return null;
   }
-return data;
+  
+  return data;
 }
-
-
-
 
 // ========================
 // Exports
@@ -115,6 +133,7 @@ return data;
 module.exports = {
   fetchInteractionsCountByMonth,
   fetchLastFiveMonthsInteractions,
+  fetchHeatmapInteractions, 
   fetchCategoryCount,
   fetchAllCategoryCounts,
   createEnquiry,

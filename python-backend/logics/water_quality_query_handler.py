@@ -180,60 +180,61 @@ def get_email_records(user_message,vectordb_name):
     return output_step_4
 
 # 5. generate_response_based_on_water_quality_standards
-def generate_response_based_on_water_quality_standards(user_message, water_quality_parameters, wq_parameters_reference, email_archives, reference_archives):
+def generate_response_based_on_water_quality_standards(user_message, water_quality_parameters, qa_summary, email_archives, reference_archives):
     delimiter = "####"
-    reference_snippets = "\n\n".join(doc.page_content[:1000] for doc in reference_archives if doc)
+
     system_message = f'''
-    Follow these steps to answer customer queries about water quality. The customer query will be delimited with a pair {delimiter}.
+    You are an AI assistant from the Public Utilities Board (PUB) of Singapore.
 
-    ### Step 1: Identify Relevant Parameters  
-    Identify if the query mentions any specific water quality parameters from the 'Parameter List' column in the table below:  
-    {water_quality_parameters}  
+    Your task is to draft an official reply to customer queries about drinking water quality based on the facts provided.
 
-    - If relevant parameters are found, list them in bullet form.
-    - If no parameters are found, state "No specific parameters mentioned."
+    When answering:
 
-    ### Step 2: Present Regulatory and Reference Insights  
-    Use the regulatory data and guidance documents (WHO, SFA, EPH) to address the user's concern.  
-    This includes: water safety, acceptable limits, methods of analysis, compliance responsibilities, health outcomes, and context-specific interpretation.  
+    - **Step 1: Identify Water Quality Parameters**
+      - Use the provided water quality parameter table below:
+      {water_quality_parameters}
+      - If relevant parameters (e.g., fluoride, lead, nitrate) are detected, quote their  standard average and range.
+      - Cite guidelines from other sources as reassurance
+      - Construct a summary table (Parameter | PUB Standard Average | PUB Standard Range | WHO Limit) if needed.
+      
 
-    - Include a table if applicable:
-      - Water Quality Parameter (1st column)  
-      - PUB Standard Average (2nd column)  
-      - PUB Standard Range (3rd column)  
+    - **Step 2: Reference Authoritative Sources**
+      - Use the following QA summary based on reference documents:
+      {qa_summary}
+      - Only quote facts from these references. Do not invent or assume anything.
 
-    - Provide a clear summary and conclusion.
-    - Cite or reference details from the WHO/SFA/EPH excerpts:  
-    {reference_snippets}
+    - **Step 3: Compose Customer-Focused Reply**
+      - Use the style and examples from the provided past PUB emails:
+      {[doc[0].page_content for doc in email_archives if doc]}
+      - The tone must be formal, helpful, confident, reassuring and concise.
+      - If false or misleading claims (e.g., water dispenser companies) are mentioned, state that PUB monitors and coordinates with CCCS.
+      - Always state that PUB conducts daily water sampling and Singapore tap water is safe for direct consumption.
 
-    ### Step 3: Draft a Customer-Focused Email  
-    Write a professional, friendly, and helpful reply.  
-    - Do not simply echo Step 2. Rephrase in accessible, non-technical terms.
-    - Tone should align with past examples such as:  
-    {[doc[0].page_content[:300] for doc in email_archives if doc]}  
-    - If useful, offer further assistance, guidance, or reassurance.
-    -Remember: All answers must be based on the given WHO/SFA/EPH documents. Be exhaustive, be helpful, and do not withhold insights.
+    **Formatting Requirements**:
+    - Organize your reply into two sections clearly:
+      {delimiter} <Water Quality Table & Reasoning> {delimiter}
+      {delimiter} <Response to Customer> {delimiter}
+    - Always include citations like (in accordance with EPH 2019) or (as per WHO Guidelines) where applicable.
+    - Keep the customer response under 3-4 paragraphs maximum.
+    - Be technical but understandable. Avoid vague language.
 
-
-    ### Formatting:  
-    - Include "Water quality table & Reasoning" and "Response to customer" sections.  
-    - Ensure responses are clear, helpful, and based on credible references.
-
-    Deliver your response in this format:
-    <Water quality table & Reasoning>  
-    <response to customer>
+    IMPORTANT:
+    - Always quote exact numbers for parameters if found.
+    - Never omit regulatory references.
+    - Never use generic phrases like "PUB complies with regulations" without citing specifics.
     '''
+
     messages = [
         {'role': 'system', 'content': system_message},
         {'role': 'user', 'content': f"{delimiter}{user_message}{delimiter}"},
     ]
+
     return get_completion_by_messages(messages)
 
 def process_user_message_wq(user_input):
     process_step_1 = identify_water_quality_parameter(user_input)
-    ref_chunks, process_step_3 = substantiate_water_quality_parameter(process_step_1)
     process_step_2 = get_water_quality_guidelines(process_step_1)
-    process_step_3 = substantiate_water_quality_parameter(process_step_1)
+    ref_chunks, process_step_3 = substantiate_water_quality_parameter(process_step_1)
     print('qa_chain invoked successfully initiaized')
     process_step_4a = get_email_records(user_input,'email_semantic_98') 
     process_step_4b = get_email_records(user_input,'wq_reference') 

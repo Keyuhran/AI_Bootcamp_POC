@@ -256,6 +256,18 @@ app.post('/summarize-text', async (req, res) => {
 });
 
 
+app.post('/api/heatmap', async (req, res) => {
+  try {
+    const data = await dataController.fetchHeatmapInteractions();
+    if (!data) throw new Error('Heatmap data fetch failed');
+    res.json(data);
+  } catch (error) {
+    console.error("Heatmap endpoint error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 // Static page: details.html
 app.get('/details', (req, res) => {
   res.sendFile(path.join(frontendPath, 'details.html'));

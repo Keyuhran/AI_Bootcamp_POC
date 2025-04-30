@@ -1,66 +1,61 @@
-<!-- This page contains the "statistics" page-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-    <script src="data.js"></script>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <script src="heatmapPlugin.js"></script>
+  <script src="data.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Logo -->
-        <div class="logo-container">
-          <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
-          <div class="navbar">
-            <a href="index.html">Home</a>
-            <a href="data.html">Statistics</a>
-            <a href="file_upload.html">File Upload</a>
-            <a href="about.html">About Us</a>
-          </div>
-        </div>
-
-        <!-- Sentiment Analysis Panel -->
-        <div class="sentiment-analysis">
-            <h2>Sentiment Analysis</h2>
-            <div class="sentiment-row">
-                <span class="emoji happy">😊</span>
-                <p><strong>PUB Officers are so friendly! Love the work you do at PUB!</strong></p>
-            </div>
-            <div class="sentiment-row">
-                <span class="emoji neutral">😐</span>
-                <p><strong>The water tastes funny at times</strong></p>
-            </div>
-            <div class="sentiment-row">
-                <span class="emoji sad">😡</span>
-                <p><strong>The water at Jurong is so polluted!</strong></p>
-            </div>
-        </div>
-
-        <!-- Interactions Graph -->
-        <div class="interactions">
-            <h2>Interactions</h2>
-            <canvas id="myChart"></canvas>
-        </div>
-
-        <!-- Frequently Asked Topics -->
-        <div class="frequently-asked">
-            <h2>Frequently Asked Topics</h2>
-            <ul>
-                <li>---</li>
-            </ul>
-        </div>
+  <div class="dashboard-container">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="media/PUB_logo.png" alt="PUB Logo" class="pub-logo"/>
+      <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="data.html">Statistics</a>
+        <a href="file_upload.html">File Upload</a>
+        <a href="about.html">About Us</a>
+      </div>
     </div>
 
-    <script>
+    <!-- Heatmap (in place of sentiment analysis) -->
+    <div class="sentiment-analysis">
+      <h2>Heatmap of Interactions</h2>
+      <div id="heatmap"></div>
+      <div class="heatmap-legend">
+        <span>Less</span>
+        <div class="entry color-1"></div>
+        <div class="entry color-2"></div>
+        <div class="entry color-3"></div>
+        <div class="entry color-4"></div>
+        <div class="entry color-5"></div>
+        <span>More</span>
+      </div>
+    </div>
 
-        // Fetch data on page load
-        fetchData();
-        fetchTopCategories();
-        //fetchFrequentTopics();
-        
-    </script>
+    <!-- Interactions Graph -->
+    <div class="interactions">
+      <h2>Chatbot Interactions</h2>
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <!-- Frequently Asked Topics -->
+    <div class="frequently-asked">
+      <h2>Frequently Asked Topics</h2>
+      <ul>
+        <li>---</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    fetchData();
+    fetchTopCategories();
+    heatmapdata();
+  </script>
 </body>
 </html>

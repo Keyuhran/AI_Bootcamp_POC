@@ -1,69 +1,117 @@
-// This file contains the code to fetch the relevant data from supabase for the graphs
+// data.js
+
+// ======================
+// Interactions Bar Chart
+// ======================
 async function fetchData() {
-    try {
-        const response = await fetch('/api/interactions'); // Fetch data from backend
-        const data = await response.json();
-        
-        const xValues = [];
-        const yValues = [];
+  try {
+    const response = await fetch('/api/interactions');
+    const data = await response.json();
 
-        Object.keys(data).sort().forEach(month => {
-            xValues.push(new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' }));
-            yValues.push(data[month]);
-        });
+    const xValues = [];
+    const yValues = [];
 
-        console.log("Chart Data:", { xValues, yValues });
+    Object.keys(data).sort().forEach(month => {
+      xValues.push(new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' }));
+      yValues.push(data[month]);
+    });
 
-        // Initialize Chart
-        new Chart("myChart", {
-            type: "bar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    backgroundColor: [ "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)","rgba(0,0,255,1.0)",],
-                    data: yValues
-                }]
-            },
-            options: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: "Chatbot Interactions"
-                }
-            }
-        });
-    } catch (error) {
-        console.error("Error fetching interaction data:", error);
-    }
+    console.log("✅ Chart Data:", { xValues, yValues });
+
+    // Initialize Chart
+    new Chart("myChart", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: [
+            "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)",
+            "rgba(0,0,255,0.6)", "rgba(0,0,255,0.6)",
+            "rgba(0,0,255,1.0)"
+          ],
+          data: yValues
+        }]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Chatbot Interactions"
+        }
+      }
+    });
+  } catch (error) {
+    console.error("❌ Error fetching interaction data:", error);
+  }
 }
 
-
+// ========================
+// Top 5 Categories
+// ========================
 async function fetchTopCategories() {
-    try {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
-  
-      const sorted = Object.entries(data)
-        .sort(([, a], [, b]) => b - a)
-        .filter(([, count]) => count > 0); // remove categories with 0
-  
-      const total = sorted.reduce((sum, [, count]) => sum + count, 0);
-      const top5 = sorted.slice(0, 5); // show only top 5
-  
-      const list = document.querySelector(".frequently-asked ul");
-      list.innerHTML = ""; // clear previous
-  
-      top5.forEach(([category, count]) => {
-        const percentage = ((count / total) * 100).toFixed(1);
-        const label = category.replace(/_/g, ' '); // optional formatting
-        list.innerHTML += `<li>${label} <span>${percentage}%</span></li>`;
-      });
-    } catch (err) {
-      console.error("Error fetching top categories:", err);
-    }
-  }
+  try {
+    const response = await fetch('/api/categories');
+    const data = await response.json();
 
-module.exports={
-    fetchData,
-    fetchTopCategories
+    const sorted = Object.entries(data)
+      .sort(([, a], [, b]) => b - a)
+      .filter(([, count]) => count > 0); // remove categories with 0
+
+    const total = sorted.reduce((sum, [, count]) => sum + count, 0);
+    const top5 = sorted.slice(0, 5); // show only top 5
+
+    const list = document.querySelector(".frequently-asked ul");
+    list.innerHTML = ""; // clear previous
+
+    top5.forEach(([category, count]) => {
+      const percentage = ((count / total) * 100).toFixed(1);
+      const label = category.replace(/_/g, ' '); // optional formatting
+      list.innerHTML += `<li>${label} <span>${percentage}%</span></li>`;
+    });
+  } catch (err) {
+    console.error("❌ Error fetching top categories:", err);
+  }
+}
+
+// ========================
+// Heatmap Data
+// ========================
+async function heatmapdata() {
+  try {
+    const response = await fetch('/api/heatmap', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    });
+
+    const result = await response.json();
+    if (!result || typeof result !== 'object') {
+      console.error('❌ Heatmap API returned invalid format', result);
+      return;
+    }
+
+    console.log("✅ Heatmap API Data:", result);
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-based
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let heatmapData = {};
+
+    for (const [day, count] of Object.entries(result)) {
+      const date = new Date(year, month, parseInt(day));
+      const key = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}T${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      heatmapData[key] = count;  
+  }
+  
+
+    console.log("✅ Transformed Heatmap Data:", heatmapData);
+
+    new HeatmapPlugin('heatmap', heatmapData, {}, {}, true);
+  } catch (error) {
+    console.error('❌ Failed to fetch heatmap data:', error);
+  }
 }

@@ -174,14 +174,16 @@ html, body, #root {
 
 /* Ensure the dashboard layout is in a g.rid */
 .dashboard-container {
-  padding-top: 80px;
+  padding-top: 100px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 30px;
+  padding: 30px;
   background: linear-gradient(to right, #3a0ca3, #4361ee);
   color: white;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 /* Style the logo */
@@ -210,6 +212,20 @@ html, body, #root {
 .emoji {
   font-size: 24px;
   margin-right: 10px;
+}
+
+/* Top Section: Heatmap full width */
+.top-section {
+  width: 90%;
+  text-align: center;
+}
+
+/* Bottom Section: Two panels side-by-side */
+.bottom-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  width: 90%;
 }
 
 /* Interactions (Graph) */
@@ -871,4 +887,91 @@ textarea.chat-input {
   position: relative;
   top: 50%;
   transform: translateY(-50%);
+}
+
+/* Heatmap container */
+#heatmap {
+  display: grid;
+  grid-template-columns: repeat(31, 14px);
+  gap: 4px;
+  justify-content: center;
+  padding: 10px 0;
+  background-color: white;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.entry {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  transition: transform 0.2s ease;
+}
+
+.entry:hover {
+  transform: scale(1.3);
+}
+
+.heatmap-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: black;
+}
+.color-0 {background-color: #000000; }
+.color-1 { background-color: #6660a4; }
+.color-2 { background-color: #6660a4; }
+.color-3 { background-color: #5a54a0; }
+.color-4 { background-color: #2c21a5; }
+.color-5 { background-color: #1d10a8; }
+/* Heatmap legend */
+#heatmap-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+  gap: 8px;
+  font-size: 14px;
+  color: black;
+}
+
+.heatmap-panel {
+  grid-column: span 2;
+  background: white;
+  color: black;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.interactions, .frequently-asked {
+  background: white;
+  color: black;
+  padding: 30px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 400px; /* force them to be same height */
+}
+
+.frequently-asked ul {
+  padding-left: 20px;
+  margin-top: 20px;
+}
+
+.bottom-section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  grid-column: span 2;
+  justify-content: space-between;
+}
+
+.bottom-section .interactions,
+.bottom-section .frequently-asked {
+  flex: 1;
 }
